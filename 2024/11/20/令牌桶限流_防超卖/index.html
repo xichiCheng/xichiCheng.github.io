@@ -23,13 +23,13 @@
   
     <meta name="description" content="如何保障购票时系统承载高并发而不出问题？对于五一、国庆以及过年这些节日来说，一些热门列车的 TPS 少说有几十万 ，很有可能产生瞬时高并发压垮系统的问题，因此必须要对购票服务限流。 最开始计划采用余票缓存来展示余票数量并实现限流效果。这种方式下，系统会将列车余票数据缓存到内存中，以便快速响应前端查询请求。同时，通过缓存中的余票数量来控制购票请求的并发量，避免系统过载。 然而，余票缓存做限流也存在一">
 <meta property="og:type" content="article">
-<meta property="og:title" content="xichiChengのblog">
+<meta property="og:title" content="令牌桶限流&#x2F;防超卖">
 <meta property="og:url" content="https://xichicheng.github.io/2024/11/20/%E4%BB%A4%E7%89%8C%E6%A1%B6%E9%99%90%E6%B5%81_%E9%98%B2%E8%B6%85%E5%8D%96/index.html">
 <meta property="og:site_name" content="xichiChengのblog">
 <meta property="og:description" content="如何保障购票时系统承载高并发而不出问题？对于五一、国庆以及过年这些节日来说，一些热门列车的 TPS 少说有几十万 ，很有可能产生瞬时高并发压垮系统的问题，因此必须要对购票服务限流。 最开始计划采用余票缓存来展示余票数量并实现限流效果。这种方式下，系统会将列车余票数据缓存到内存中，以便快速响应前端查询请求。同时，通过缓存中的余票数量来控制购票请求的并发量，避免系统过载。 然而，余票缓存做限流也存在一">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-11-19T16:06:36.085Z">
-<meta property="article:modified_time" content="2024-11-19T16:06:25.360Z">
+<meta property="article:modified_time" content="2024-11-19T16:11:35.860Z">
 <meta property="article:author" content="xichiCheng">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -37,7 +37,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>xichiChengのblog</title>
+  <title>令牌桶限流/防超卖 - xichiChengのblog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -255,7 +255,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text=""></span>
+            <span id="subtitle" data-typed-text="令牌桶限流/防超卖"></span>
           
         </div>
 
@@ -326,7 +326,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header"></h1>
+            <h1 id="seo-header">令牌桶限流/防超卖</h1>
             
             
               <div class="markdown-body">
@@ -399,7 +399,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div></div>
+      <div>令牌桶限流/防超卖</div>
       <div>https://xichicheng.github.io/2024/11/20/令牌桶限流_防超卖/</div>
     </div>
     <div class="license-meta">

@@ -21,15 +21,15 @@
   <meta name="author" content="xichiCheng">
   <meta name="keywords" content="">
   
-    <meta name="description" content="如何保障购票时系统承载高并发而不出问题？对于五一、国庆以及过年这些节日来说，一些热门列车的 TPS 少说有几十万 ，很有可能产生瞬时高并发压垮系统的问题，因此必须要对购票服务限流。 最开始计划采用余票缓存来展示余票数量并实现限流效果。这种方式下，系统会将列车余票数据缓存到内存中，以便快速响应前端查询请求。同时，通过缓存中的余票数量来控制购票请求的并发量，避免系统过载。 然而，余票缓存做限流也存在一">
+    <meta name="description" content="出现原因在高并发情况下，可能有大量新用户同时注册，输入的用户名极有可能不存于数据库中，而且这些查询数据库的key也不会被写入缓存，造成每次请求都查不到缓存，直接查询数据库，给数据库造成巨大压力。  其他解决方案对不存在的key进行缓存对不存在的 Key 进行缓存，值设为 Null，并设置短暂过期时间，如 60 秒。 问题对用户体验不好，假如有一个人注册了a名字，那别人在过期时间都不能注册这名字 而">
 <meta property="og:type" content="article">
-<meta property="og:title" content="令牌桶限流&#x2F;防超卖">
-<meta property="og:url" content="https://xichicheng.github.io/2024/11/20/%E4%BB%A4%E7%89%8C%E6%A1%B6%E9%99%90%E6%B5%81_%E9%98%B2%E8%B6%85%E5%8D%96/index.html">
+<meta property="og:title" content="解决注册缓存穿透">
+<meta property="og:url" content="https://xichicheng.github.io/2024/11/20/%E8%A7%A3%E5%86%B3%E6%B3%A8%E5%86%8C%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/index.html">
 <meta property="og:site_name" content="xichiChengのblog">
-<meta property="og:description" content="如何保障购票时系统承载高并发而不出问题？对于五一、国庆以及过年这些节日来说，一些热门列车的 TPS 少说有几十万 ，很有可能产生瞬时高并发压垮系统的问题，因此必须要对购票服务限流。 最开始计划采用余票缓存来展示余票数量并实现限流效果。这种方式下，系统会将列车余票数据缓存到内存中，以便快速响应前端查询请求。同时，通过缓存中的余票数量来控制购票请求的并发量，避免系统过载。 然而，余票缓存做限流也存在一">
+<meta property="og:description" content="出现原因在高并发情况下，可能有大量新用户同时注册，输入的用户名极有可能不存于数据库中，而且这些查询数据库的key也不会被写入缓存，造成每次请求都查不到缓存，直接查询数据库，给数据库造成巨大压力。  其他解决方案对不存在的key进行缓存对不存在的 Key 进行缓存，值设为 Null，并设置短暂过期时间，如 60 秒。 问题对用户体验不好，假如有一个人注册了a名字，那别人在过期时间都不能注册这名字 而">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-11-19T16:06:36.085Z">
-<meta property="article:modified_time" content="2024-11-19T16:11:35.860Z">
+<meta property="article:published_time" content="2024-11-20T04:16:41.453Z">
+<meta property="article:modified_time" content="2024-11-20T04:17:27.176Z">
 <meta property="article:author" content="xichiCheng">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -37,7 +37,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>令牌桶限流/防超卖 - xichiChengのblog</title>
+  <title>解决注册缓存穿透 - xichiChengのblog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -255,7 +255,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="令牌桶限流/防超卖"></span>
+            <span id="subtitle" data-typed-text="解决注册缓存穿透"></span>
           
         </div>
 
@@ -266,8 +266,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-11-20 00:06" pubdate>
-          2024年11月20日 凌晨
+        <time datetime="2024-11-20 12:16" pubdate>
+          2024年11月20日 中午
         </time>
       </span>
     
@@ -278,7 +278,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.7k 字
+          954 字
         
       </span>
     
@@ -289,7 +289,7 @@
         
         
         
-          15 分钟
+          8 分钟
         
       </span>
     
@@ -326,62 +326,39 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">令牌桶限流/防超卖</h1>
+            <h1 id="seo-header">解决注册缓存穿透</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="如何保障购票时系统承载高并发而不出问题？"><a href="#如何保障购票时系统承载高并发而不出问题？" class="headerlink" title="如何保障购票时系统承载高并发而不出问题？"></a>如何保障购票时系统承载高并发而不出问题？</h2><p>对于五一、国庆以及过年这些节日来说，一些热门列车的 TPS 少说有几十万 ，很有可能产生瞬时高并发压垮系统的问题，因此必须要对购票服务限流。</p>
-<p><font style="background-color:rgb(253, 253, 254);">最开始计划采用余票缓存来展示余票数量并实现限流效果。这种方式下，系统会将列车余票数据缓存到内存中，以便快速响应前端查询请求。同时，通过缓存中的余票数量来控制购票请求的并发量，避免系统过载。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">然而，余票缓存做限流也存在一定的风险。特别是在极端情况下，如扣减余票缓存成功后应用宕机，会导致余票缓存和余票数据库库存不一致。这种情况下，前端查询缓存可能会展示余票为0，但数据库实际仍有余票。这种时候，类似于电商的处理，余票为 0 的记录是不允许用户再提交订单的。为了避免用户因余票数量不准确而无法购票，系统需要采取额外的措施来保障购票流程的顺畅。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">为了解决这个问题，系统引入了令牌桶限流机制。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">令牌桶限流是一种常用的限流算法，它通过一个令牌容器来存放令牌，每个令牌代表一张列车余票。用户购票时需要先尝试从令牌容器中扣减令牌。如果扣减成功，表示余票数量充足，用户可以继续进行后续的座位分配和订单创建流程；如果扣减失败，则请求被拒绝，避免了对后端数据库的过度压力。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">为了进一步提高系统的稳定性和可靠性，系统在令牌桶限流的基础上还增加了二次检查机制。当发现没有剩余可用令牌时，系统会触发一个请求去比对数据库是否还有余票。如果数据库有余票，那么系统会将令牌容器缓存删除，并在下一个用户购票时重新加载。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">如果我们用了令牌遇到上述极端情况，令牌余量为 0，余票缓存余量正常，数据库正常。这个时候，只要余票缓存不为 0，那么哪怕令牌为空，也可以让用户正常下单，进而触发刷新令牌容器的操作。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">除此之外，在扣减令牌，分配座位成功后，系统会立即将数据库中的座位状态修改为已锁定，防止其他用户同时购买同一个座位。同时，通过Canal数据库变更监听工具，系统会实时监控到座位状态的变更，并更新余票缓存，确保缓存中的余票数据与数据库保持一致。</font></p>
-<h2 id="令牌桶限流如何实现？"><a href="#令牌桶限流如何实现？" class="headerlink" title="令牌桶限流如何实现？"></a>令牌桶限流如何实现？</h2><h3 id="一、令牌桶的初始化和存储"><a href="#一、令牌桶的初始化和存储" class="headerlink" title="一、令牌桶的初始化和存储"></a><font style="background-color:rgb(253, 253, 254);">一、令牌桶的初始化和存储</font></h3><ol>
-<li><strong><font style="background-color:rgb(253, 253, 254);">令牌桶的创建</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">在Redis中创建一个特定结构的Key，用于存储令牌桶的信息。这个Key由车票服务标识、令牌限流容器的标识以及列车ID信息组成。</font></li>
-</ul>
-</li>
-<li><strong><font style="background-color:rgb(253, 253, 254);">令牌桶的存储</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">令牌桶采用 Hash结构， Key 由此列车出发站，终点站以及座位类型组成，对应的 Value 就是列车座位余量。</font></li>
-<li><font style="background-color:rgb(253, 253, 254);">比如id为2的火车对应的令牌桶，有key为北京南_杭州东_0，对应的val为10，代表由北京南驶向杭州东的2号火车的商务座余票量为10，还有key为北京南_南京南_2 ，val为800，代表由北京南驶向南京南的2号火车的二等座余票量为800。</font></li>
-<li><font style="background-color:rgb(253, 253, 254);">而当购买一张票时，还要扣减中间站点以及沿途各站的余量，</font>比如2号火车的行驶路线由北京南站—南京南站—杭州东站 ，如果用户买了北京南站—杭州东站的火车票，同时也要扣减北京南站—南京南站，南京南站—杭州东站的火车票。</li>
-</ul>
-</li>
+                <h2 id="出现原因"><a href="#出现原因" class="headerlink" title="出现原因"></a>出现原因</h2><p><font style="color:rgb(51, 51, 51);">在高并发情况下，可能有大量新用户同时注册，输入的用户名极有可能不存于数据库中，而且这些查询数据库的key也不会被写入缓存，造成每次请求都查不到缓存，直接查询数据库，给数据库造成巨大压力。</font></p>
+<p><font style="color:rgb(51, 51, 51);"></font></p>
+<h2 id="其他解决方案"><a href="#其他解决方案" class="headerlink" title="其他解决方案"></a><font style="color:rgb(51, 51, 51);">其他解决方案</font></h2><h3 id="对不存在的key进行缓存"><a href="#对不存在的key进行缓存" class="headerlink" title="对不存在的key进行缓存"></a><font style="color:rgb(51, 51, 51);">对不存在的key进行缓存</font></h3><p><font style="color:rgb(51, 51, 51);">对不存在的 Key 进行缓存，值设为 Null，并设置短暂过期时间，如 60 秒。</font></p>
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a><font style="color:rgb(51, 51, 51);">问题</font></h4><p><font style="color:rgb(51, 51, 51);">对用户体验不好，假如有一个人注册了a名字，那别人在过期时间都不能注册这名字</font></p>
+<p><font style="color:rgb(51, 51, 51);">而且</font><strong><font style="color:rgb(51, 51, 51);">如果同时有大量并发请求查询不同的名字，数据库还是会秒挂</font></strong></p>
+<p><font style="color:rgb(51, 51, 51);"></font></p>
+<h3 id="Redis-Set-存储已注册用户名"><a href="#Redis-Set-存储已注册用户名" class="headerlink" title=" Redis Set 存储已注册用户名"></a><font style="color:rgb(51, 51, 51);"> Redis Set 存储已注册用户名</font></h3><p><font style="color:rgb(51, 51, 51);">使用确定的数据结构如 Redis 的 Set 集合来存储已注册用户名，判断时检查是否在集合内。</font></p>
+<h4 id="问题-1"><a href="#问题-1" class="headerlink" title="问题"></a><font style="color:rgb(51, 51, 51);">问题</font></h4><p><font style="color:rgb(51, 51, 51);">永久存储十几亿的用户名到 Redis 缓存中显然不太现实，因为这会</font><strong><font style="color:rgb(51, 51, 51);">占用大量的内存资源。</font></strong></p>
+<p><font style="color:rgb(51, 51, 51);">即使是临时存储，注册用户名还是很有可能在缓存中查询不到数据，</font><strong><font style="color:rgb(51, 51, 51);">仍然无法避免查询数据库的场景。</font></strong></p>
+<p><font style="color:rgb(51, 51, 51);">即使进行分片，也会增加系统的复杂度。</font></p>
+<p><font style="color:rgb(51, 51, 51);">由于该方案占用内存较多且复杂度较高，因此不适合实际应用。</font></p>
+<p><font style="color:rgb(51, 51, 51);"></font></p>
+<h3 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a><font style="color:rgb(51, 51, 51);">分布式锁</font></h3><p><font style="color:rgb(51, 51, 51);">针对高并发注册场景，可以先查询缓存，如果不命中则使用分布式锁来保证只有一个线程访问数据库。</font></p>
+<h4 id="问题-2"><a href="#问题-2" class="headerlink" title="问题"></a><font style="color:rgb(51, 51, 51);">问题</font></h4><p><font style="color:rgb(51, 51, 51);">虽然一定程度上可以解决缓存穿透问题，但是如果在用户注册高峰期，只有一个线程访问数据库，这可能会导致大量用户的注册请求缓慢或超时，</font><strong><font style="color:rgb(51, 51, 51);">对用户的使用体验来说并不友好。</font></strong></p>
+<p><font style="color:rgb(51, 51, 51);"></font></p>
+<h2 id="12306-解决注册穿透方案"><a href="#12306-解决注册穿透方案" class="headerlink" title="12306 解决注册穿透方案"></a><font style="color:rgb(51, 51, 51);">12306 解决注册穿透方案</font></h2><h3 id="12306如何解决用户注册缓存穿透问题？"><a href="#12306如何解决用户注册缓存穿透问题？" class="headerlink" title="12306如何解决用户注册缓存穿透问题？"></a>12306如何解决用户注册缓存穿透问题？</h3><p><strong><font style="color:rgb(51, 51, 51);">使用布隆过滤器，将所有已注册的用户名存入布隆过滤器，查询时先判断该用户名是否在布隆过滤器中，不在的一定不存在，避免直接查询数据库。</font></strong></p>
+<p><font style="color:rgb(51, 51, 51);">但是如果用户注销了账号，该用户名就可以再次被使用。然而，布隆过滤器由于无法删除元素，因此无法处理这种情况。</font></p>
+<p><font style="color:rgb(51, 51, 51);">为此，我们可以用Redis Set结构储存已注销的用户名。</font></p>
+<p><font style="color:rgb(51, 51, 51);">当其他用户查询用户名是否已被使用时，首先检查布隆过滤器是否包含该用户名。</font></p>
+<p>如果布隆过滤器不存在这个名字，说明未被注册，返回成功</p>
+<p>如果布隆过滤器存在此名字，<font style="color:rgb(51, 51, 51);">进一步检查Redis Set结构中是否包含该用户名。如果有，则代表用户名虽然已被注册但是后来又被注销，可以使用此用户名，返回成功。</font></p>
+<p><font style="color:rgb(51, 51, 51);">如果不存在，则代表该用户名在使用中，尚未注销，因此不可用，返回失败。</font></p>
+<h3 id="出现问题"><a href="#出现问题" class="headerlink" title="出现问题"></a>出现问题</h3><p><font style="color:rgb(51, 51, 51);">如果用户频繁申请账号再注销，可能导致用户注销可复用的 Username Redis Set 结构变得庞大，增加了存储和查询的负担。</font></p>
+<p><font style="color:rgb(51, 51, 51);">为了防止这种情况，我采取了以下解决方案：</font></p>
+<ol>
+<li><font style="color:rgb(51, 51, 51);">异常行为限制：每次用户注销时，记录用户的证件号，并限制证件号仅可用于注销五次。超过这个限制的次数，将禁止该证件号再次用于注册账号。</font></li>
+<li><font style="color:rgb(51, 51, 51);">缓存分片处理：对Set 结构进行分片，根据用户名的 HashCode 进行取模操作，将数据分散存储在 1024 个 Set 结构中，从而有效防止Redis 大 Key 问题。</font></li>
 </ol>
-<h3 id="二、令牌获取流程"><a href="#二、令牌获取流程" class="headerlink" title="二、令牌获取流程"></a><font style="background-color:rgb(253, 253, 254);">二、令牌获取流程</font></h3><ol>
-<li><strong><font style="background-color:rgb(253, 253, 254);">令牌容器存在性检查</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">在尝试获取令牌之前，系统首先会检查令牌容器是否在Redis中有效。如果令牌容器失效，系统会重新读取并放入缓存。</font></li>
-</ul>
-</li>
-<li><strong><font style="background-color:rgb(253, 253, 254);">准备Lua脚本执行数据</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">然后系统会准备一系列参数，包括存储Redis Hash结构的Key值、用户购买的出发站点和到达站点、需要扣减的相关列车站点以及座位类型和对应数量，这些参数将被传递给Lua脚本。</font></li>
-</ul>
-</li>
-<li><strong><font style="background-color:rgb(253, 253, 254);">执行Lua脚本获取令牌</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">最后，通过客户端调用 Redis 执行 Lua 脚本。判断当前令牌数是否足够满足用户的请求。如果令牌不足，则直接返回失败，如果足够，扣减出发站点和到达站点以及相关的车站令牌余量</font></li>
-</ul>
-</li>
-<li><strong><font style="background-color:rgb(253, 253, 254);">Lua脚本的原子性</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">Lua脚本在Redis中的执行是原子性的，保证了在高并发环境下，令牌桶状态的更新和令牌的获取是安全的。</font></li>
-</ul>
-</li>
-</ol>
-<h2 id="如何防止库存超卖"><a href="#如何防止库存超卖" class="headerlink" title="如何防止库存超卖"></a>如何防止库存超卖</h2><p><font style="background-color:rgb(253, 253, 254);">为了防止库存超卖，系统采取了以下措施：</font></p>
-<h4 id="令牌桶限流："><a href="#令牌桶限流：" class="headerlink" title="令牌桶限流："></a><font style="background-color:rgb(253, 253, 254);">令牌桶限流：</font></h4><pre><code class="hljs">- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;通过令牌桶限流机制，确保只有在获取到令牌的情况下，用户才能继续购票流程。&lt;/font&gt;
-- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;令牌的数量与列车座位余量一一对应，从而避免了超卖的情况。&lt;/font&gt;
-</code></pre>
-<h4 id="订单锁定机制："><a href="#订单锁定机制：" class="headerlink" title="订单锁定机制："></a><font style="background-color:rgb(253, 253, 254);">订单锁定机制：</font></h4><pre><code class="hljs">- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;在扣减令牌、分配座位成功后，系统会立即将数据库中的座位状态修改为已锁定。&lt;/font&gt;
-- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;这一机制防止了其他用户同时购买同一个座位，从而避免了库存超卖的风险。&lt;/font&gt;
-</code></pre>
-<h4 id="缓存与数据库一致性："><a href="#缓存与数据库一致性：" class="headerlink" title="缓存与数据库一致性："></a><font style="background-color:rgb(253, 253, 254);">缓存与数据库一致性：</font></h4><pre><code class="hljs">- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;通过Canal数据库变更监听工具，系统能够实时监控座位状态的变更，并更新余票缓存。&lt;/font&gt;
-- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;这确保了缓存中的余票数据与数据库保持一致，避免了因缓存不一致而导致的超卖问题。&lt;/font&gt;
-</code></pre>
-<p><font style="background-color:rgb(253, 253, 254);">通过令牌桶限流机制、订单锁定机制以及缓存与数据库一致性保障等措施，系统能够有效地防止库存超卖问题，确保购票流程在高并发下的顺畅进行。</font></p>
-<p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>
-<p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>
 
                 
               </div>
@@ -399,8 +376,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>令牌桶限流/防超卖</div>
-      <div>https://xichicheng.github.io/2024/11/20/令牌桶限流_防超卖/</div>
+      <div>解决注册缓存穿透</div>
+      <div>https://xichicheng.github.io/2024/11/20/解决注册缓存穿透/</div>
     </div>
     <div class="license-meta">
       
@@ -444,15 +421,21 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/11/20/%E5%88%97%E8%BD%A6%E6%A3%80%E7%B4%A2/" title="列车检索">
+                      <a href="/2024/11/20/%E5%8F%8C%E9%87%8D%E5%88%A4%E5%AE%9A%E9%94%81%E8%A7%A3%E5%86%B3%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF/" title="双重判定锁解决缓存击穿">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">列车检索</span>
+                        <span class="hidden-mobile">双重判定锁解决缓存击穿</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2024/11/20/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="设计模式">
+                        <span class="hidden-mobile">设计模式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>

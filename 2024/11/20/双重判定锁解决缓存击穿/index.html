@@ -21,15 +21,15 @@
   <meta name="author" content="xichiCheng">
   <meta name="keywords" content="">
   
-    <meta name="description" content="如何保障购票时系统承载高并发而不出问题？对于五一、国庆以及过年这些节日来说，一些热门列车的 TPS 少说有几十万 ，很有可能产生瞬时高并发压垮系统的问题，因此必须要对购票服务限流。 最开始计划采用余票缓存来展示余票数量并实现限流效果。这种方式下，系统会将列车余票数据缓存到内存中，以便快速响应前端查询请求。同时，通过缓存中的余票数量来控制购票请求的并发量，避免系统过载。 然而，余票缓存做限流也存在一">
+    <meta name="description" content="出现原因热点数据过期导致大量的请求会同时查询后端数据库。 对于一个之前从未被请求过的数据，当它第一次被请求时，缓存中没有这个数据，从而导致请求穿透到后端存储。 解决方案设置热点数据永不过期：对于一些热点数据，可以将其设置永不过期 但是这些数据将长期占据缓存空间，可能导致缓存资源无法被有效利用。如果后台数据库中的数据发生变化，而缓存中的数据未能及时更新，就会导致数据不一致的问题。 使用互斥锁：在获取">
 <meta property="og:type" content="article">
-<meta property="og:title" content="令牌桶限流&#x2F;防超卖">
-<meta property="og:url" content="https://xichicheng.github.io/2024/11/20/%E4%BB%A4%E7%89%8C%E6%A1%B6%E9%99%90%E6%B5%81_%E9%98%B2%E8%B6%85%E5%8D%96/index.html">
+<meta property="og:title" content="双重判定锁解决缓存击穿">
+<meta property="og:url" content="https://xichicheng.github.io/2024/11/20/%E5%8F%8C%E9%87%8D%E5%88%A4%E5%AE%9A%E9%94%81%E8%A7%A3%E5%86%B3%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF/index.html">
 <meta property="og:site_name" content="xichiChengのblog">
-<meta property="og:description" content="如何保障购票时系统承载高并发而不出问题？对于五一、国庆以及过年这些节日来说，一些热门列车的 TPS 少说有几十万 ，很有可能产生瞬时高并发压垮系统的问题，因此必须要对购票服务限流。 最开始计划采用余票缓存来展示余票数量并实现限流效果。这种方式下，系统会将列车余票数据缓存到内存中，以便快速响应前端查询请求。同时，通过缓存中的余票数量来控制购票请求的并发量，避免系统过载。 然而，余票缓存做限流也存在一">
+<meta property="og:description" content="出现原因热点数据过期导致大量的请求会同时查询后端数据库。 对于一个之前从未被请求过的数据，当它第一次被请求时，缓存中没有这个数据，从而导致请求穿透到后端存储。 解决方案设置热点数据永不过期：对于一些热点数据，可以将其设置永不过期 但是这些数据将长期占据缓存空间，可能导致缓存资源无法被有效利用。如果后台数据库中的数据发生变化，而缓存中的数据未能及时更新，就会导致数据不一致的问题。 使用互斥锁：在获取">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-11-19T16:06:36.085Z">
-<meta property="article:modified_time" content="2024-11-19T16:11:35.860Z">
+<meta property="article:published_time" content="2024-11-20T04:16:41.453Z">
+<meta property="article:modified_time" content="2024-11-20T04:17:55.080Z">
 <meta property="article:author" content="xichiCheng">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -37,7 +37,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>令牌桶限流/防超卖 - xichiChengのblog</title>
+  <title>双重判定锁解决缓存击穿 - xichiChengのblog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -255,7 +255,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="令牌桶限流/防超卖"></span>
+            <span id="subtitle" data-typed-text="双重判定锁解决缓存击穿"></span>
           
         </div>
 
@@ -266,8 +266,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-11-20 00:06" pubdate>
-          2024年11月20日 凌晨
+        <time datetime="2024-11-20 12:16" pubdate>
+          2024年11月20日 中午
         </time>
       </span>
     
@@ -278,7 +278,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.7k 字
+          531 字
         
       </span>
     
@@ -289,7 +289,7 @@
         
         
         
-          15 分钟
+          5 分钟
         
       </span>
     
@@ -326,62 +326,22 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">令牌桶限流/防超卖</h1>
+            <h1 id="seo-header">双重判定锁解决缓存击穿</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="如何保障购票时系统承载高并发而不出问题？"><a href="#如何保障购票时系统承载高并发而不出问题？" class="headerlink" title="如何保障购票时系统承载高并发而不出问题？"></a>如何保障购票时系统承载高并发而不出问题？</h2><p>对于五一、国庆以及过年这些节日来说，一些热门列车的 TPS 少说有几十万 ，很有可能产生瞬时高并发压垮系统的问题，因此必须要对购票服务限流。</p>
-<p><font style="background-color:rgb(253, 253, 254);">最开始计划采用余票缓存来展示余票数量并实现限流效果。这种方式下，系统会将列车余票数据缓存到内存中，以便快速响应前端查询请求。同时，通过缓存中的余票数量来控制购票请求的并发量，避免系统过载。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">然而，余票缓存做限流也存在一定的风险。特别是在极端情况下，如扣减余票缓存成功后应用宕机，会导致余票缓存和余票数据库库存不一致。这种情况下，前端查询缓存可能会展示余票为0，但数据库实际仍有余票。这种时候，类似于电商的处理，余票为 0 的记录是不允许用户再提交订单的。为了避免用户因余票数量不准确而无法购票，系统需要采取额外的措施来保障购票流程的顺畅。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">为了解决这个问题，系统引入了令牌桶限流机制。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">令牌桶限流是一种常用的限流算法，它通过一个令牌容器来存放令牌，每个令牌代表一张列车余票。用户购票时需要先尝试从令牌容器中扣减令牌。如果扣减成功，表示余票数量充足，用户可以继续进行后续的座位分配和订单创建流程；如果扣减失败，则请求被拒绝，避免了对后端数据库的过度压力。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">为了进一步提高系统的稳定性和可靠性，系统在令牌桶限流的基础上还增加了二次检查机制。当发现没有剩余可用令牌时，系统会触发一个请求去比对数据库是否还有余票。如果数据库有余票，那么系统会将令牌容器缓存删除，并在下一个用户购票时重新加载。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">如果我们用了令牌遇到上述极端情况，令牌余量为 0，余票缓存余量正常，数据库正常。这个时候，只要余票缓存不为 0，那么哪怕令牌为空，也可以让用户正常下单，进而触发刷新令牌容器的操作。</font></p>
-<p><font style="background-color:rgb(253, 253, 254);">除此之外，在扣减令牌，分配座位成功后，系统会立即将数据库中的座位状态修改为已锁定，防止其他用户同时购买同一个座位。同时，通过Canal数据库变更监听工具，系统会实时监控到座位状态的变更，并更新余票缓存，确保缓存中的余票数据与数据库保持一致。</font></p>
-<h2 id="令牌桶限流如何实现？"><a href="#令牌桶限流如何实现？" class="headerlink" title="令牌桶限流如何实现？"></a>令牌桶限流如何实现？</h2><h3 id="一、令牌桶的初始化和存储"><a href="#一、令牌桶的初始化和存储" class="headerlink" title="一、令牌桶的初始化和存储"></a><font style="background-color:rgb(253, 253, 254);">一、令牌桶的初始化和存储</font></h3><ol>
-<li><strong><font style="background-color:rgb(253, 253, 254);">令牌桶的创建</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">在Redis中创建一个特定结构的Key，用于存储令牌桶的信息。这个Key由车票服务标识、令牌限流容器的标识以及列车ID信息组成。</font></li>
-</ul>
-</li>
-<li><strong><font style="background-color:rgb(253, 253, 254);">令牌桶的存储</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">令牌桶采用 Hash结构， Key 由此列车出发站，终点站以及座位类型组成，对应的 Value 就是列车座位余量。</font></li>
-<li><font style="background-color:rgb(253, 253, 254);">比如id为2的火车对应的令牌桶，有key为北京南_杭州东_0，对应的val为10，代表由北京南驶向杭州东的2号火车的商务座余票量为10，还有key为北京南_南京南_2 ，val为800，代表由北京南驶向南京南的2号火车的二等座余票量为800。</font></li>
-<li><font style="background-color:rgb(253, 253, 254);">而当购买一张票时，还要扣减中间站点以及沿途各站的余量，</font>比如2号火车的行驶路线由北京南站—南京南站—杭州东站 ，如果用户买了北京南站—杭州东站的火车票，同时也要扣减北京南站—南京南站，南京南站—杭州东站的火车票。</li>
-</ul>
-</li>
-</ol>
-<h3 id="二、令牌获取流程"><a href="#二、令牌获取流程" class="headerlink" title="二、令牌获取流程"></a><font style="background-color:rgb(253, 253, 254);">二、令牌获取流程</font></h3><ol>
-<li><strong><font style="background-color:rgb(253, 253, 254);">令牌容器存在性检查</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">在尝试获取令牌之前，系统首先会检查令牌容器是否在Redis中有效。如果令牌容器失效，系统会重新读取并放入缓存。</font></li>
-</ul>
-</li>
-<li><strong><font style="background-color:rgb(253, 253, 254);">准备Lua脚本执行数据</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">然后系统会准备一系列参数，包括存储Redis Hash结构的Key值、用户购买的出发站点和到达站点、需要扣减的相关列车站点以及座位类型和对应数量，这些参数将被传递给Lua脚本。</font></li>
-</ul>
-</li>
-<li><strong><font style="background-color:rgb(253, 253, 254);">执行Lua脚本获取令牌</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">最后，通过客户端调用 Redis 执行 Lua 脚本。判断当前令牌数是否足够满足用户的请求。如果令牌不足，则直接返回失败，如果足够，扣减出发站点和到达站点以及相关的车站令牌余量</font></li>
-</ul>
-</li>
-<li><strong><font style="background-color:rgb(253, 253, 254);">Lua脚本的原子性</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
-<li><font style="background-color:rgb(253, 253, 254);">Lua脚本在Redis中的执行是原子性的，保证了在高并发环境下，令牌桶状态的更新和令牌的获取是安全的。</font></li>
-</ul>
-</li>
-</ol>
-<h2 id="如何防止库存超卖"><a href="#如何防止库存超卖" class="headerlink" title="如何防止库存超卖"></a>如何防止库存超卖</h2><p><font style="background-color:rgb(253, 253, 254);">为了防止库存超卖，系统采取了以下措施：</font></p>
-<h4 id="令牌桶限流："><a href="#令牌桶限流：" class="headerlink" title="令牌桶限流："></a><font style="background-color:rgb(253, 253, 254);">令牌桶限流：</font></h4><pre><code class="hljs">- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;通过令牌桶限流机制，确保只有在获取到令牌的情况下，用户才能继续购票流程。&lt;/font&gt;
-- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;令牌的数量与列车座位余量一一对应，从而避免了超卖的情况。&lt;/font&gt;
-</code></pre>
-<h4 id="订单锁定机制："><a href="#订单锁定机制：" class="headerlink" title="订单锁定机制："></a><font style="background-color:rgb(253, 253, 254);">订单锁定机制：</font></h4><pre><code class="hljs">- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;在扣减令牌、分配座位成功后，系统会立即将数据库中的座位状态修改为已锁定。&lt;/font&gt;
-- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;这一机制防止了其他用户同时购买同一个座位，从而避免了库存超卖的风险。&lt;/font&gt;
-</code></pre>
-<h4 id="缓存与数据库一致性："><a href="#缓存与数据库一致性：" class="headerlink" title="缓存与数据库一致性："></a><font style="background-color:rgb(253, 253, 254);">缓存与数据库一致性：</font></h4><pre><code class="hljs">- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;通过Canal数据库变更监听工具，系统能够实时监控座位状态的变更，并更新余票缓存。&lt;/font&gt;
-- &lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;这确保了缓存中的余票数据与数据库保持一致，避免了因缓存不一致而导致的超卖问题。&lt;/font&gt;
-</code></pre>
-<p><font style="background-color:rgb(253, 253, 254);">通过令牌桶限流机制、订单锁定机制以及缓存与数据库一致性保障等措施，系统能够有效地防止库存超卖问题，确保购票流程在高并发下的顺畅进行。</font></p>
-<p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>
-<p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>
+                <h2 id="出现原因"><a href="#出现原因" class="headerlink" title="出现原因"></a>出现原因</h2><p>热点数据过期导致大量的请求会同时查询后端数据库。</p>
+<p>对于一个之前从未被请求过的数据，当它第一次被请求时，缓存中没有这个数据，从而导致请求穿透到后端存储。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><h3 id="设置热点数据永不过期："><a href="#设置热点数据永不过期：" class="headerlink" title="设置热点数据永不过期："></a>设置热点数据永不过期：</h3><p>对于一些热点数据，可以将其设置永不过期</p>
+<p><font style="background-color:rgb(253, 253, 254);">但是这些数据将长期占据缓存空间，可能导致缓存资源无法被有效利用。如果后台数据库中的数据发生变化，而缓存中的数据未能及时更新，就会导致数据不一致的问题。</font></p>
+<h3 id="使用互斥锁："><a href="#使用互斥锁：" class="headerlink" title="使用互斥锁："></a>使用互斥锁：</h3><p>在获取数据时，使用分布式锁（如 Redis 的分布式锁）来控制同时只有一个请求可以去后端获取数据，其他请求需要等待锁释放。这样可以防止多个请求同时穿透到后端存储，有效地避免了缓存击穿问题。</p>
+<p>但还有一个问题就是，假如 有1w 的请求读取一个缓存，只有一个线程会执行逻辑请求数据库并放入缓存。剩下的请求全部在等待获取分布式锁。但即使剩下的请求获取到了锁，还是会继续请求数据库。</p>
+<p>这会对数据库造成无用的性能浪费，因为这 100w 的请求，只有第一次是有效的。</p>
+<p>而且还会造成用户响应时间变长，接口吞吐量下降。</p>
+<p>因此我们可以做双重判断</p>
+<p>获取分布式锁后，在查询数据库之前，<strong>再次检查一下缓存中是否存在数据</strong>。如果缓存中存在数据，说明之前已经有线程将数据库中的数据加载到缓存中了，不需要继续从数据库中读取，直接返回缓存中的数据；如果不存在，才继续执行查询数据库的操作。</p>
+<p>这样不仅<font style="background-color:rgb(253, 253, 254);">减少数据库访问压力，还降低用户响应时间</font></p>
 
                 
               </div>
@@ -399,8 +359,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>令牌桶限流/防超卖</div>
-      <div>https://xichicheng.github.io/2024/11/20/令牌桶限流_防超卖/</div>
+      <div>双重判定锁解决缓存击穿</div>
+      <div>https://xichicheng.github.io/2024/11/20/双重判定锁解决缓存击穿/</div>
     </div>
     <div class="license-meta">
       
@@ -444,15 +404,15 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/11/20/%E5%88%97%E8%BD%A6%E6%A3%80%E7%B4%A2/" title="列车检索">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">列车检索</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2024/11/20/%E8%A7%A3%E5%86%B3%E6%B3%A8%E5%86%8C%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/" title="解决注册缓存穿透">
+                        <span class="hidden-mobile">解决注册缓存穿透</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>

@@ -30,7 +30,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xichicheng.github.io/img/head.jpg">
 <meta property="article:published_time" content="2024-11-19T16:06:36.085Z">
-<meta property="article:modified_time" content="2024-11-20T04:56:39.849Z">
+<meta property="article:modified_time" content="2024-11-20T05:09:12.050Z">
 <meta property="article:author" content="xichiCheng">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://xichicheng.github.io/img/head.jpg">
@@ -286,7 +286,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.7k 字
+          1.6k 字
         
       </span>
     
@@ -297,7 +297,7 @@
         
         
         
-          15 分钟
+          14 分钟
         
       </span>
     
@@ -378,15 +378,23 @@
 </li>
 </ol>
 <h2 id="如何防止库存超卖"><a href="#如何防止库存超卖" class="headerlink" title="如何防止库存超卖"></a>如何防止库存超卖</h2><p><font style="background-color:rgb(253, 253, 254);">为了防止库存超卖，系统采取了以下措施：</font></p>
-<h4 id="令牌桶限流："><a href="#令牌桶限流：" class="headerlink" title="令牌桶限流："></a><font style="background-color:rgb(253, 253, 254);">令牌桶限流：</font></h4><pre><code class="hljs">&lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;通过令牌桶限流机制，确保只有在获取到令牌的情况下，用户才能继续购票流程。&lt;/font&gt;
-&lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;令牌的数量与列车座位余量一一对应，从而避免了超卖的情况。&lt;/font&gt;
-</code></pre>
-<h4 id="订单锁定机制："><a href="#订单锁定机制：" class="headerlink" title="订单锁定机制："></a><font style="background-color:rgb(253, 253, 254);">订单锁定机制：</font></h4><pre><code class="hljs">&lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;在扣减令牌、分配座位成功后，系统会立即将数据库中的座位状态修改为已锁定。&lt;/font&gt;
-&lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;这一机制防止了其他用户同时购买同一个座位，从而避免了库存超卖的风险。&lt;/font&gt;
-</code></pre>
-<h4 id="缓存与数据库一致性："><a href="#缓存与数据库一致性：" class="headerlink" title="缓存与数据库一致性："></a><font style="background-color:rgb(253, 253, 254);">缓存与数据库一致性：</font></h4><pre><code class="hljs">&lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;通过Canal数据库变更监听工具，系统能够实时监控座位状态的变更，并更新余票缓存。&lt;/font&gt;
-&lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;这确保了缓存中的余票数据与数据库保持一致，避免了因缓存不一致而导致的超卖问题。&lt;/font&gt;
-</code></pre>
+<ol>
+<li><strong><font style="background-color:rgb(253, 253, 254);">令牌桶限流：</font></strong><ul>
+<li><font style="background-color:rgb(253, 253, 254);">通过令牌桶限流机制，确保只有在获取到令牌的情况下，用户才能继续购票流程。</font></li>
+<li><font style="background-color:rgb(253, 253, 254);">令牌的数量与列车座位余量一一对应，从而避免了超卖的情况。</font></li>
+</ul>
+</li>
+<li><strong><font style="background-color:rgb(253, 253, 254);">订单锁定机制：</font></strong><ul>
+<li><font style="background-color:rgb(253, 253, 254);">在扣减令牌、分配座位成功后，系统会立即将数据库中的座位状态修改为已锁定。</font></li>
+<li><font style="background-color:rgb(253, 253, 254);">这一机制防止了其他用户同时购买同一个座位，从而避免了库存超卖的风险。</font></li>
+</ul>
+</li>
+<li><strong><font style="background-color:rgb(253, 253, 254);">缓存与数据库一致性：</font></strong><ul>
+<li><font style="background-color:rgb(253, 253, 254);">通过Canal数据库变更监听工具，系统能够实时监控座位状态的变更，并更新余票缓存。</font></li>
+<li><font style="background-color:rgb(253, 253, 254);">这确保了缓存中的余票数据与数据库保持一致，避免了因缓存不一致而导致的超卖问题。</font></li>
+</ul>
+</li>
+</ol>
 <p><font style="background-color:rgb(253, 253, 254);">通过令牌桶限流机制、订单锁定机制以及缓存与数据库一致性保障等措施，系统能够有效地防止库存超卖问题，确保购票流程在高并发下的顺畅进行。</font></p>
 <p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>
 <p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>

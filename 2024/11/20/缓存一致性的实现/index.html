@@ -21,28 +21,28 @@
   <meta name="author" content="陈兮迟">
   <meta name="keywords" content="">
   
-    <meta name="description" content="出现原因在高并发情况下，可能有大量新用户同时注册，输入的用户名极有可能不存于数据库中，而且这些查询数据库的key也不会被写入缓存，造成每次请求都查不到缓存，直接查询数据库，给数据库造成巨大压力。  其他解决方案对不存在的key进行缓存对不存在的 Key 进行缓存，值设为 Null，并设置短暂过期时间，如 60 秒。 问题对用户体验不好，假如有一个人注册了a名字，那别人在过期时间都不能注册这名字 而">
+    <meta name="description" content="缓存一致性是指缓存中的数据与数据库之间的数据保持一致，确保用户读取到的是最新、最准确的数据。 在分布式系统中，由于多个节点可能同时访问和修改数据，因此保证缓存一致性非常重要  解决方案当数据更新时，我们最好删除缓存，下一次查询缓存时会出现未命中，这时需要重新读取一次数据库并加载到缓存中，这时缓存中的数据就是最新的数据。 如果直接更新缓存可能会涉及复杂的逻辑和额外的开销，影响缓存服务器的性能  如果">
 <meta property="og:type" content="article">
-<meta property="og:title" content="解决注册缓存穿透">
-<meta property="og:url" content="https://xichicheng.github.io/2024/11/20/%E8%A7%A3%E5%86%B3%E6%B3%A8%E5%86%8C%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/index.html">
+<meta property="og:title" content="缓存一致性的实现">
+<meta property="og:url" content="https://xichicheng.github.io/2024/11/20/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0/index.html">
 <meta property="og:site_name" content="xichiChengのblog">
-<meta property="og:description" content="出现原因在高并发情况下，可能有大量新用户同时注册，输入的用户名极有可能不存于数据库中，而且这些查询数据库的key也不会被写入缓存，造成每次请求都查不到缓存，直接查询数据库，给数据库造成巨大压力。  其他解决方案对不存在的key进行缓存对不存在的 Key 进行缓存，值设为 Null，并设置短暂过期时间，如 60 秒。 问题对用户体验不好，假如有一个人注册了a名字，那别人在过期时间都不能注册这名字 而">
+<meta property="og:description" content="缓存一致性是指缓存中的数据与数据库之间的数据保持一致，确保用户读取到的是最新、最准确的数据。 在分布式系统中，由于多个节点可能同时访问和修改数据，因此保证缓存一致性非常重要  解决方案当数据更新时，我们最好删除缓存，下一次查询缓存时会出现未命中，这时需要重新读取一次数据库并加载到缓存中，这时缓存中的数据就是最新的数据。 如果直接更新缓存可能会涉及复杂的逻辑和额外的开销，影响缓存服务器的性能  如果">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xichicheng.github.io/img/img4.jpg">
-<meta property="article:published_time" content="2024-11-20T04:16:41.453Z">
-<meta property="article:modified_time" content="2024-11-20T12:40:26.767Z">
+<meta property="og:image" content="https://xichicheng.github.io/img/img6.jpg">
+<meta property="article:published_time" content="2024-11-20T13:17:41.878Z">
+<meta property="article:modified_time" content="2024-11-20T13:18:10.791Z">
 <meta property="article:author" content="陈兮迟">
 <meta property="article:tag" content="java后端面经">
 <meta property="article:tag" content="项目">
 <meta property="article:tag" content="12306">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xichicheng.github.io/img/img4.jpg">
+<meta name="twitter:image" content="https://xichicheng.github.io/img/img6.jpg">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>解决注册缓存穿透 - xichiChengのblog</title>
+  <title>缓存一致性的实现 - xichiChengのblog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -194,13 +194,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/img4.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/img/img6.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="解决注册缓存穿透"></span>
+            <span id="subtitle" data-typed-text="缓存一致性的实现"></span>
           
         </div>
 
@@ -216,8 +216,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-11-20 12:16" pubdate>
-          星期三, 十一月 20日 2024, 12:16 中午
+        <time datetime="2024-11-20 21:17" pubdate>
+          星期三, 十一月 20日 2024, 9:17 晚上
         </time>
       </span>
     
@@ -229,7 +229,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          954 字
+          1.1k 字
         
       </span>
     
@@ -241,7 +241,7 @@
         
         
           <!-- compatible with older versions-->
-          8 分钟
+          10 分钟
         
       </span>
     
@@ -287,40 +287,59 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">解决注册缓存穿透</h1>
+            <h1 id="seo-header">缓存一致性的实现</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="出现原因"><a href="#出现原因" class="headerlink" title="出现原因"></a>出现原因</h2><p><font style="color:rgb(51, 51, 51);">在高并发情况下，可能有大量新用户同时注册，输入的用户名极有可能不存于数据库中，而且这些查询数据库的key也不会被写入缓存，造成每次请求都查不到缓存，直接查询数据库，给数据库造成巨大压力。</font></p>
-<p><font style="color:rgb(51, 51, 51);"></font></p>
-<h2 id="其他解决方案"><a href="#其他解决方案" class="headerlink" title="其他解决方案"></a><font style="color:rgb(51, 51, 51);">其他解决方案</font></h2><h3 id="对不存在的key进行缓存"><a href="#对不存在的key进行缓存" class="headerlink" title="对不存在的key进行缓存"></a><font style="color:rgb(51, 51, 51);">对不存在的key进行缓存</font></h3><p><font style="color:rgb(51, 51, 51);">对不存在的 Key 进行缓存，值设为 Null，并设置短暂过期时间，如 60 秒。</font></p>
-<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a><font style="color:rgb(51, 51, 51);">问题</font></h4><p><font style="color:rgb(51, 51, 51);">对用户体验不好，假如有一个人注册了a名字，那别人在过期时间都不能注册这名字</font></p>
-<p><font style="color:rgb(51, 51, 51);">而且</font><strong><font style="color:rgb(51, 51, 51);">如果同时有大量并发请求查询不同的名字，数据库还是会秒挂</font></strong></p>
-<p><font style="color:rgb(51, 51, 51);"></font></p>
-<h3 id="Redis-Set-存储已注册用户名"><a href="#Redis-Set-存储已注册用户名" class="headerlink" title=" Redis Set 存储已注册用户名"></a><font style="color:rgb(51, 51, 51);"> Redis Set 存储已注册用户名</font></h3><p><font style="color:rgb(51, 51, 51);">使用确定的数据结构如 Redis 的 Set 集合来存储已注册用户名，判断时检查是否在集合内。</font></p>
-<h4 id="问题-1"><a href="#问题-1" class="headerlink" title="问题"></a><font style="color:rgb(51, 51, 51);">问题</font></h4><p><font style="color:rgb(51, 51, 51);">永久存储十几亿的用户名到 Redis 缓存中显然不太现实，因为这会</font><strong><font style="color:rgb(51, 51, 51);">占用大量的内存资源。</font></strong></p>
-<p><font style="color:rgb(51, 51, 51);">即使是临时存储，注册用户名还是很有可能在缓存中查询不到数据，</font><strong><font style="color:rgb(51, 51, 51);">仍然无法避免查询数据库的场景。</font></strong></p>
-<p><font style="color:rgb(51, 51, 51);">即使进行分片，也会增加系统的复杂度。</font></p>
-<p><font style="color:rgb(51, 51, 51);">由于该方案占用内存较多且复杂度较高，因此不适合实际应用。</font></p>
-<p><font style="color:rgb(51, 51, 51);"></font></p>
-<h3 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a><font style="color:rgb(51, 51, 51);">分布式锁</font></h3><p><font style="color:rgb(51, 51, 51);">针对高并发注册场景，可以先查询缓存，如果不命中则使用分布式锁来保证只有一个线程访问数据库。</font></p>
-<h4 id="问题-2"><a href="#问题-2" class="headerlink" title="问题"></a><font style="color:rgb(51, 51, 51);">问题</font></h4><p><font style="color:rgb(51, 51, 51);">虽然一定程度上可以解决缓存穿透问题，但是如果在用户注册高峰期，只有一个线程访问数据库，这可能会导致大量用户的注册请求缓慢或超时，</font><strong><font style="color:rgb(51, 51, 51);">对用户的使用体验来说并不友好。</font></strong></p>
-<p><font style="color:rgb(51, 51, 51);"></font></p>
-<h2 id="12306-解决注册穿透方案"><a href="#12306-解决注册穿透方案" class="headerlink" title="12306 解决注册穿透方案"></a><font style="color:rgb(51, 51, 51);">12306 解决注册穿透方案</font></h2><h3 id="12306如何解决用户注册缓存穿透问题？"><a href="#12306如何解决用户注册缓存穿透问题？" class="headerlink" title="12306如何解决用户注册缓存穿透问题？"></a>12306如何解决用户注册缓存穿透问题？</h3><p><strong><font style="color:rgb(51, 51, 51);">使用布隆过滤器，将所有已注册的用户名存入布隆过滤器，查询时先判断该用户名是否在布隆过滤器中，不在的一定不存在，避免直接查询数据库。</font></strong></p>
-<p><font style="color:rgb(51, 51, 51);">但是如果用户注销了账号，该用户名就可以再次被使用。然而，布隆过滤器由于无法删除元素，因此无法处理这种情况。</font></p>
-<p><font style="color:rgb(51, 51, 51);">为此，我们可以用Redis Set结构储存已注销的用户名。</font></p>
-<p><font style="color:rgb(51, 51, 51);">当其他用户查询用户名是否已被使用时，首先检查布隆过滤器是否包含该用户名。</font></p>
-<p>如果布隆过滤器不存在这个名字，说明未被注册，返回成功</p>
-<p>如果布隆过滤器存在此名字，<font style="color:rgb(51, 51, 51);">进一步检查Redis Set结构中是否包含该用户名。如果有，则代表用户名虽然已被注册但是后来又被注销，可以使用此用户名，返回成功。</font></p>
-<p><font style="color:rgb(51, 51, 51);">如果不存在，则代表该用户名在使用中，尚未注销，因此不可用，返回失败。</font></p>
-<h3 id="出现问题"><a href="#出现问题" class="headerlink" title="出现问题"></a>出现问题</h3><p><font style="color:rgb(51, 51, 51);">如果用户频繁申请账号再注销，可能导致用户注销可复用的 Username Redis Set 结构变得庞大，增加了存储和查询的负担。</font></p>
-<p><font style="color:rgb(51, 51, 51);">为了防止这种情况，我采取了以下解决方案：</font></p>
-<ol>
-<li><font style="color:rgb(51, 51, 51);">异常行为限制：每次用户注销时，记录用户的证件号，并限制证件号仅可用于注销五次。超过这个限制的次数，将禁止该证件号再次用于注册账号。</font></li>
-<li><font style="color:rgb(51, 51, 51);">缓存分片处理：对Set 结构进行分片，根据用户名的 HashCode 进行取模操作，将数据分散存储在 1024 个 Set 结构中，从而有效防止Redis 大 Key 问题。</font></li>
+                <p><font style="background-color:rgb(253, 253, 254);">缓存一致性是指缓存中的数据与数据库之间的数据保持一致，确保用户读取到的是最新、最准确的数据。</font></p>
+<p><font style="background-color:rgb(253, 253, 254);">在分布式系统中，由于多个节点可能同时访问和修改数据，因此保证缓存一致性非常重要</font></p>
+<p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a><font style="background-color:rgb(253, 253, 254);">解决方案</font></h2><p><font style="background-color:rgb(253, 253, 254);">当数据更新时，我们最好删除缓存，下一次查询缓存时会出现未命中，这时需要重新读取一次数据库并加载到缓存中，这时缓存中的数据就是最新的数据。</font></p>
+<p><font style="background-color:rgb(253, 253, 254);">如果直接更新缓存可能会涉及复杂的逻辑和额外的开销，影响缓存服务器的性能</font></p>
+<p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>
+<p><font style="background-color:rgb(253, 253, 254);">如果先删缓存，再更新数据库，可能会出现一些问题：</font></p>
+<p><font style="background-color:rgb(253, 253, 254);">线程A删除缓存后，线程B读取到旧数据并更新到缓存中，而线程A随后更新数据库，导致缓存中存储了旧数据。</font></p>
+<p><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);"></font></p>
+<p>如果先更新数据库再删除缓存，也有可能出现一些问题：</p>
+<p>在线程A更新数据库和删除缓存之间，可能有线程B读取到了缓存中的旧数据。但最终缓存与数据库的数据是一致的，并且都是最新的。</p>
+<p>经过对比可以发现，</p>
+<p>如果先删除缓存，再更新数据库，如果没有及时更新，可能会导致缓存长时间地储存旧数据。对业务影响较大</p>
+<p>而先更新数据库，再删除缓存，只存在一个很小周期的缓存与数据库不一致的情况，因此，对于一致性要求不是很高的业务可以选择先更新数据库，再删除缓存，保证缓存一致性。</p>
+<h2 id="列车余票如何保障缓存数据库一致性"><a href="#列车余票如何保障缓存数据库一致性" class="headerlink" title="列车余票如何保障缓存数据库一致性"></a><font style="color:rgb(38, 38, 38);">列车余票如何保障缓存数据库一致性</font></h2><p>但是先更新数据库，再删除缓存，如果出现删除缓存失败的情况，缓存中储存的还是旧数据，就会出现缓存数据库不一致的情况，并不能保证系统的高可用。</p>
+<p>因此像列车余票扣减这种对一致性敏感的业务，最好还是通过 Binlog 异步更新列车缓存，实现缓存一致性。</p>
+<h3 id="一、利用Binlog异步更新缓存"><a href="#一、利用Binlog异步更新缓存" class="headerlink" title="一、利用Binlog异步更新缓存"></a><font style="background-color:rgb(253, 253, 254);">一、利用Binlog异步更新缓存</font></h3><ol>
+<li><strong><font style="background-color:rgb(253, 253, 254);">Binlog记录数据变更</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
+<li><font style="background-color:rgb(253, 253, 254);">当列车余票数据在数据库中发生变化时（如用户购票导致余票减少），MySQL会将这一变更记录到Binlog日志中。</font></li>
+</ul>
+</li>
+<li><strong><font style="background-color:rgb(253, 253, 254);">Canal监听Binlog</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
+<li><font style="color:rgb(51, 51, 51);">‌Canal是一个基于</font><a target="_blank" rel="noopener" href="https://www.baidu.com/s?sa=re_dqa_generate&wd=MySQL&rsv_pq=8ebb7bea0376a922&oq=Canal%E6%98%AF%E4%BB%80%E4%B9%88%E4%B8%AD%E9%97%B4%E4%BB%B6&rsv_t=1de1WUCSFGRtk/sivOAxZPZ8SFt+hjnkvhuapaTdWPtY4Qtz3RKHZbG6tWP55a7YZRAKl+6GePK6&tn=39042058_26_oem_dg&ie=utf-8"><font style="color:rgb(51, 51, 51);">MySQL</font></a><font style="color:rgb(51, 51, 51);">增量日志解析的中间件，</font><font style="background-color:rgb(253, 253, 254);">通过监听Binlog的变化，可以实时地解析出Binlog中的数据变更信息。</font></li>
+</ul>
+</li>
+<li><strong><font style="background-color:rgb(253, 253, 254);">异步更新缓存</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
+<li><font style="background-color:rgb(253, 253, 254);">然后Canal将解析出的数据变更信息发送到消息队列中。</font></li>
+<li><font style="background-color:rgb(253, 253, 254);">购票模块中的缓存同步服务 订阅消息队列中的消息，并根据消息中的数据变更信息，异步地更新缓存中的数据。例如，如果数据库中某趟列车的余票减少了，缓存同步服务就会相应地减少缓存中该趟列车的余票数量。</font></li>
+</ul>
+</li>
 </ol>
-
+<h3 id="二、优势分析"><a href="#二、优势分析" class="headerlink" title="二、优势分析"></a><font style="background-color:rgb(253, 253, 254);">二、优势分析</font></h3><ol>
+<li><strong><font style="background-color:rgb(253, 253, 254);">高可靠性</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
+<li><font style="background-color:rgb(253, 253, 254);">通过消息队列的持久化机制和重试机制，可以确保数据变更信息能够可靠地传递到缓存系统，并成功地更新缓存中的数据。即使缓存更新失败，系统也能够在后续的重试中成功更新。</font></li>
+</ul>
+</li>
+<li><strong><font style="background-color:rgb(253, 253, 254);">实时性高</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
+<li>由于Binlog的写入和监听都是异步进行的，并且这些过程通常具有较高的处理速度，因此可以确保缓存中的数据与数据库中的数据之间的延迟非常小。</li>
+</ul>
+</li>
+<li><strong><font style="background-color:rgb(253, 253, 254);">自动化与减少人为错误</font></strong><font style="background-color:rgb(253, 253, 254);">：</font><ul>
+<li><font style="background-color:rgb(253, 253, 254);">因为Binlog更新缓存的过程是自动化的，不需要人工干预或额外的触发机制。这大大减少了由于人为错误或系统延迟导致的缓存更新不及的问题。</font></li>
+</ul>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>所以在对一致性要求不是很高的业务，可以选择先更新数据库，再删除缓存。</p>
+<p>像列车余票扣减这种对一致性敏感的业务，最好还是通过 Binlog 异步更新列车余票缓存，实现缓存一致性。</p>
+<h2 id="延时双删"><a href="#延时双删" class="headerlink" title="延时双删"></a>延时双删</h2>
                 
               </div>
             
@@ -369,8 +388,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>解决注册缓存穿透</div>
-      <div>https://xichicheng.github.io/2024/11/20/解决注册缓存穿透/</div>
+      <div>缓存一致性的实现</div>
+      <div>https://xichicheng.github.io/2024/11/20/缓存一致性的实现/</div>
     </div>
     <div class="license-meta">
       
@@ -414,9 +433,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/11/20/%E5%8F%8C%E9%87%8D%E5%88%A4%E5%AE%9A%E9%94%81%E8%A7%A3%E5%86%B3%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF/" title="双重判定锁解决缓存击穿">
+                      <a href="/2024/11/20/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/" title="分库分表">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">双重判定锁解决缓存击穿</span>
+                        <span class="hidden-mobile">分库分表</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -424,8 +443,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/11/20/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="设计模式">
-                        <span class="hidden-mobile">设计模式</span>
+                      <a href="/2024/11/20/%E5%8F%8C%E9%87%8D%E5%88%A4%E5%AE%9A%E9%94%81%E8%A7%A3%E5%86%B3%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF/" title="双重判定锁解决缓存击穿">
+                        <span class="hidden-mobile">双重判定锁解决缓存击穿</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -445,8 +464,8 @@
     
       <script type="text/javascript">
         var disqus_config = function() {
-          this.page.url = 'https://xichicheng.github.io/2024/11/20/%E8%A7%A3%E5%86%B3%E6%B3%A8%E5%86%8C%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/';
-          this.page.identifier = '/2024/11/20/%E8%A7%A3%E5%86%B3%E6%B3%A8%E5%86%8C%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/';
+          this.page.url = 'https://xichicheng.github.io/2024/11/20/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0/';
+          this.page.identifier = '/2024/11/20/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0/';
         };
         Fluid.utils.loadComments('#disqus_thread', function() {
           var d = document, s = d.createElement('script');

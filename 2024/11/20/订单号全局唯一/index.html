@@ -21,28 +21,28 @@
   <meta name="author" content="陈兮迟">
   <meta name="keywords" content="">
   
-    <meta name="description" content="出现原因在高并发情况下，可能有大量新用户同时注册，输入的用户名极有可能不存于数据库中，而且这些查询数据库的key也不会被写入缓存，造成每次请求都查不到缓存，直接查询数据库，给数据库造成巨大压力。  其他解决方案对不存在的key进行缓存对不存在的 Key 进行缓存，值设为 Null，并设置短暂过期时间，如 60 秒。 问题对用户体验不好，假如有一个人注册了a名字，那别人在过期时间都不能注册这名字 而">
+    <meta name="description" content="12306项目保证订单号全局唯一的解决方案基于雪花算法。 雪花算法是一种分布式ID生成算法。主要功能是在分布式系统中生成全局唯一的ID，并且这些ID是按照时间有序递增的，索引效率高。 雪花算法使用一个64位的二进制数字作为ID，这64位被分割成四个部分：  符号位（1位）：最高位是符号位，始终为0，用于标识ID是正数。 时间戳（41位）：时间戳41位，精确到毫秒级，可以支持69年。 工作机器ID（">
 <meta property="og:type" content="article">
-<meta property="og:title" content="解决注册缓存穿透">
-<meta property="og:url" content="https://xichicheng.github.io/2024/11/20/%E8%A7%A3%E5%86%B3%E6%B3%A8%E5%86%8C%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/index.html">
+<meta property="og:title" content="订单号全局唯一">
+<meta property="og:url" content="https://xichicheng.github.io/2024/11/20/%E8%AE%A2%E5%8D%95%E5%8F%B7%E5%85%A8%E5%B1%80%E5%94%AF%E4%B8%80/index.html">
 <meta property="og:site_name" content="xichiChengのblog">
-<meta property="og:description" content="出现原因在高并发情况下，可能有大量新用户同时注册，输入的用户名极有可能不存于数据库中，而且这些查询数据库的key也不会被写入缓存，造成每次请求都查不到缓存，直接查询数据库，给数据库造成巨大压力。  其他解决方案对不存在的key进行缓存对不存在的 Key 进行缓存，值设为 Null，并设置短暂过期时间，如 60 秒。 问题对用户体验不好，假如有一个人注册了a名字，那别人在过期时间都不能注册这名字 而">
+<meta property="og:description" content="12306项目保证订单号全局唯一的解决方案基于雪花算法。 雪花算法是一种分布式ID生成算法。主要功能是在分布式系统中生成全局唯一的ID，并且这些ID是按照时间有序递增的，索引效率高。 雪花算法使用一个64位的二进制数字作为ID，这64位被分割成四个部分：  符号位（1位）：最高位是符号位，始终为0，用于标识ID是正数。 时间戳（41位）：时间戳41位，精确到毫秒级，可以支持69年。 工作机器ID（">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xichicheng.github.io/img/img4.jpg">
-<meta property="article:published_time" content="2024-11-20T04:16:41.453Z">
-<meta property="article:modified_time" content="2024-11-20T12:40:26.767Z">
+<meta property="og:image" content="https://xichicheng.github.io/img/img8.jpeg">
+<meta property="article:published_time" content="2024-11-20T13:20:07.362Z">
+<meta property="article:modified_time" content="2024-11-20T13:21:31.089Z">
 <meta property="article:author" content="陈兮迟">
 <meta property="article:tag" content="java后端面经">
 <meta property="article:tag" content="项目">
 <meta property="article:tag" content="12306">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xichicheng.github.io/img/img4.jpg">
+<meta name="twitter:image" content="https://xichicheng.github.io/img/img8.jpeg">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>解决注册缓存穿透 - xichiChengのblog</title>
+  <title>订单号全局唯一 - xichiChengのblog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -194,13 +194,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/img4.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/img/img8.jpeg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="解决注册缓存穿透"></span>
+            <span id="subtitle" data-typed-text="订单号全局唯一"></span>
           
         </div>
 
@@ -216,8 +216,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-11-20 12:16" pubdate>
-          星期三, 十一月 20日 2024, 12:16 中午
+        <time datetime="2024-11-20 21:20" pubdate>
+          星期三, 十一月 20日 2024, 9:20 晚上
         </time>
       </span>
     
@@ -229,7 +229,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          954 字
+          604 字
         
       </span>
     
@@ -241,7 +241,7 @@
         
         
           <!-- compatible with older versions-->
-          8 分钟
+          6 分钟
         
       </span>
     
@@ -287,39 +287,29 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">解决注册缓存穿透</h1>
+            <h1 id="seo-header">订单号全局唯一</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="出现原因"><a href="#出现原因" class="headerlink" title="出现原因"></a>出现原因</h2><p><font style="color:rgb(51, 51, 51);">在高并发情况下，可能有大量新用户同时注册，输入的用户名极有可能不存于数据库中，而且这些查询数据库的key也不会被写入缓存，造成每次请求都查不到缓存，直接查询数据库，给数据库造成巨大压力。</font></p>
-<p><font style="color:rgb(51, 51, 51);"></font></p>
-<h2 id="其他解决方案"><a href="#其他解决方案" class="headerlink" title="其他解决方案"></a><font style="color:rgb(51, 51, 51);">其他解决方案</font></h2><h3 id="对不存在的key进行缓存"><a href="#对不存在的key进行缓存" class="headerlink" title="对不存在的key进行缓存"></a><font style="color:rgb(51, 51, 51);">对不存在的key进行缓存</font></h3><p><font style="color:rgb(51, 51, 51);">对不存在的 Key 进行缓存，值设为 Null，并设置短暂过期时间，如 60 秒。</font></p>
-<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a><font style="color:rgb(51, 51, 51);">问题</font></h4><p><font style="color:rgb(51, 51, 51);">对用户体验不好，假如有一个人注册了a名字，那别人在过期时间都不能注册这名字</font></p>
-<p><font style="color:rgb(51, 51, 51);">而且</font><strong><font style="color:rgb(51, 51, 51);">如果同时有大量并发请求查询不同的名字，数据库还是会秒挂</font></strong></p>
-<p><font style="color:rgb(51, 51, 51);"></font></p>
-<h3 id="Redis-Set-存储已注册用户名"><a href="#Redis-Set-存储已注册用户名" class="headerlink" title=" Redis Set 存储已注册用户名"></a><font style="color:rgb(51, 51, 51);"> Redis Set 存储已注册用户名</font></h3><p><font style="color:rgb(51, 51, 51);">使用确定的数据结构如 Redis 的 Set 集合来存储已注册用户名，判断时检查是否在集合内。</font></p>
-<h4 id="问题-1"><a href="#问题-1" class="headerlink" title="问题"></a><font style="color:rgb(51, 51, 51);">问题</font></h4><p><font style="color:rgb(51, 51, 51);">永久存储十几亿的用户名到 Redis 缓存中显然不太现实，因为这会</font><strong><font style="color:rgb(51, 51, 51);">占用大量的内存资源。</font></strong></p>
-<p><font style="color:rgb(51, 51, 51);">即使是临时存储，注册用户名还是很有可能在缓存中查询不到数据，</font><strong><font style="color:rgb(51, 51, 51);">仍然无法避免查询数据库的场景。</font></strong></p>
-<p><font style="color:rgb(51, 51, 51);">即使进行分片，也会增加系统的复杂度。</font></p>
-<p><font style="color:rgb(51, 51, 51);">由于该方案占用内存较多且复杂度较高，因此不适合实际应用。</font></p>
-<p><font style="color:rgb(51, 51, 51);"></font></p>
-<h3 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a><font style="color:rgb(51, 51, 51);">分布式锁</font></h3><p><font style="color:rgb(51, 51, 51);">针对高并发注册场景，可以先查询缓存，如果不命中则使用分布式锁来保证只有一个线程访问数据库。</font></p>
-<h4 id="问题-2"><a href="#问题-2" class="headerlink" title="问题"></a><font style="color:rgb(51, 51, 51);">问题</font></h4><p><font style="color:rgb(51, 51, 51);">虽然一定程度上可以解决缓存穿透问题，但是如果在用户注册高峰期，只有一个线程访问数据库，这可能会导致大量用户的注册请求缓慢或超时，</font><strong><font style="color:rgb(51, 51, 51);">对用户的使用体验来说并不友好。</font></strong></p>
-<p><font style="color:rgb(51, 51, 51);"></font></p>
-<h2 id="12306-解决注册穿透方案"><a href="#12306-解决注册穿透方案" class="headerlink" title="12306 解决注册穿透方案"></a><font style="color:rgb(51, 51, 51);">12306 解决注册穿透方案</font></h2><h3 id="12306如何解决用户注册缓存穿透问题？"><a href="#12306如何解决用户注册缓存穿透问题？" class="headerlink" title="12306如何解决用户注册缓存穿透问题？"></a>12306如何解决用户注册缓存穿透问题？</h3><p><strong><font style="color:rgb(51, 51, 51);">使用布隆过滤器，将所有已注册的用户名存入布隆过滤器，查询时先判断该用户名是否在布隆过滤器中，不在的一定不存在，避免直接查询数据库。</font></strong></p>
-<p><font style="color:rgb(51, 51, 51);">但是如果用户注销了账号，该用户名就可以再次被使用。然而，布隆过滤器由于无法删除元素，因此无法处理这种情况。</font></p>
-<p><font style="color:rgb(51, 51, 51);">为此，我们可以用Redis Set结构储存已注销的用户名。</font></p>
-<p><font style="color:rgb(51, 51, 51);">当其他用户查询用户名是否已被使用时，首先检查布隆过滤器是否包含该用户名。</font></p>
-<p>如果布隆过滤器不存在这个名字，说明未被注册，返回成功</p>
-<p>如果布隆过滤器存在此名字，<font style="color:rgb(51, 51, 51);">进一步检查Redis Set结构中是否包含该用户名。如果有，则代表用户名虽然已被注册但是后来又被注销，可以使用此用户名，返回成功。</font></p>
-<p><font style="color:rgb(51, 51, 51);">如果不存在，则代表该用户名在使用中，尚未注销，因此不可用，返回失败。</font></p>
-<h3 id="出现问题"><a href="#出现问题" class="headerlink" title="出现问题"></a>出现问题</h3><p><font style="color:rgb(51, 51, 51);">如果用户频繁申请账号再注销，可能导致用户注销可复用的 Username Redis Set 结构变得庞大，增加了存储和查询的负担。</font></p>
-<p><font style="color:rgb(51, 51, 51);">为了防止这种情况，我采取了以下解决方案：</font></p>
+                <p>12306项目保证订单号全局唯一的解决方案基于雪花算法。</p>
+<p><font style="background-color:rgb(253, 253, 254);">雪花算法是一种分布式ID生成算法。主要功能是在分布式系统中生成全局唯一的ID，并且这些ID是按照时间有序递增的，索引效率高。</font></p>
+<p><font style="background-color:rgb(253, 253, 254);">雪花算法使用一个64位的二进制数字作为ID，这64位被分割成四个部分：</font></p>
 <ol>
-<li><font style="color:rgb(51, 51, 51);">异常行为限制：每次用户注销时，记录用户的证件号，并限制证件号仅可用于注销五次。超过这个限制的次数，将禁止该证件号再次用于注册账号。</font></li>
-<li><font style="color:rgb(51, 51, 51);">缓存分片处理：对Set 结构进行分片，根据用户名的 HashCode 进行取模操作，将数据分散存储在 1024 个 Set 结构中，从而有效防止Redis 大 Key 问题。</font></li>
+<li><strong><font style="background-color:rgb(253, 253, 254);">符号位（1位）</font></strong><font style="background-color:rgb(253, 253, 254);">：最高位是符号位，始终为0，用于标识ID是正数。</font></li>
+<li><strong><font style="background-color:rgb(253, 253, 254);">时间戳（41位）</font></strong><font style="background-color:rgb(253, 253, 254);">：时间戳41位，精确到毫秒级，可以支持69年。</font></li>
+<li><strong><font style="background-color:rgb(253, 253, 254);">工作机器ID（10位）</font></strong><font style="background-color:rgb(253, 253, 254);">：标识位有10位，可以进一步细分为5位数据中心ID和5位工作机器ID，以支持最多32个数据中心和每个数据中心最多32个工作节点。</font></li>
+<li><strong><font style="background-color:rgb(253, 253, 254);">序列号（12位）</font></strong><font style="background-color:rgb(253, 253, 254);">：序列号占12位，用于标识同一毫秒内生成的不同ID，支持每个节点每毫秒产生4096个唯一的ID。</font></li>
 </ol>
+<p>12306项目中订单ID也是由几个部分拼接而成</p>
+<p>以毫秒为单位获取当前的时间戳，再减去一个固定的起始时间戳，得到ID的时间戳部分</p>
+<p><font style="background-color:rgb(253, 253, 254);">每个节点在生成ID时都会有一个唯一的节点ID，这个节点ID存放在 Redis。节点ID在最终生成的ID中占据固定的位数为5位，最多支持32个不同的节点。</font></p>
+<p>在同一毫秒内生成多个ID时，通过序列号来区分。</p>
+<p>序列号在最终生成的ID中占据固定的位数为7位，意味着每个毫秒内最多可以生成128个不同的ID。</p>
+<p>序列号在每个毫秒开始时重置为0，并在每次调用生成ID方法时递增。如果在同一毫秒内生成的ID数量超过了序列号的最大值，则序列号会循环回到0，并且等待到下一个毫秒再生成新的ID，以避免重复。</p>
+<p>最后拼接订单ID时，</p>
+<p><font style="background-color:rgb(253, 253, 254);">时间戳需要向左移动 12 位来腾出足够的空间存储5位节点ID和7位序列号，节点ID左移7位，通过位或运算（|），可以将左移后的时间戳、节点 ID和序列号组合成一个长整型数值，再在末尾拼接用户ID后六位数，</font></p>
+<p><font style="background-color:rgb(253, 253, 254);">组成了全局唯一订单号。</font></p>
 
                 
               </div>
@@ -369,8 +359,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>解决注册缓存穿透</div>
-      <div>https://xichicheng.github.io/2024/11/20/解决注册缓存穿透/</div>
+      <div>订单号全局唯一</div>
+      <div>https://xichicheng.github.io/2024/11/20/订单号全局唯一/</div>
     </div>
     <div class="license-meta">
       
@@ -414,18 +404,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/11/20/%E5%8F%8C%E9%87%8D%E5%88%A4%E5%AE%9A%E9%94%81%E8%A7%A3%E5%86%B3%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF/" title="双重判定锁解决缓存击穿">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">双重判定锁解决缓存击穿</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/11/20/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="设计模式">
-                        <span class="hidden-mobile">设计模式</span>
+                      <a href="/2024/11/20/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/" title="分库分表">
+                        <span class="hidden-mobile">分库分表</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -445,8 +429,8 @@
     
       <script type="text/javascript">
         var disqus_config = function() {
-          this.page.url = 'https://xichicheng.github.io/2024/11/20/%E8%A7%A3%E5%86%B3%E6%B3%A8%E5%86%8C%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/';
-          this.page.identifier = '/2024/11/20/%E8%A7%A3%E5%86%B3%E6%B3%A8%E5%86%8C%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/';
+          this.page.url = 'https://xichicheng.github.io/2024/11/20/%E8%AE%A2%E5%8D%95%E5%8F%B7%E5%85%A8%E5%B1%80%E5%94%AF%E4%B8%80/';
+          this.page.identifier = '/2024/11/20/%E8%AE%A2%E5%8D%95%E5%8F%B7%E5%85%A8%E5%B1%80%E5%94%AF%E4%B8%80/';
         };
         Fluid.utils.loadComments('#disqus_thread', function() {
           var d = document, s = d.createElement('script');

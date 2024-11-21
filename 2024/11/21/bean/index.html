@@ -21,28 +21,28 @@
   <meta name="author" content="陈兮迟">
   <meta name="keywords" content="">
   
-    <meta name="description" content="车票搜索为什么用Redis而不是ESElasticSearch 是一款非常强大的开源搜索及分析引擎 而Redis是一个开源的内存数据结构存储系统 从实时性能来说，Redis 将数据存储在内存中，因此具有极低的读取延迟，可以快速响应实时查询请求。这对于需要即时更新的列车数据非常重要，确保用户能够获取到最新的车票信息。 从部署成本来说，Redis是一款轻量级的数据库，内存占用相对较低，可以在较小的硬件">
+    <meta name="description" content="概念 基本概念：Bean是由Spring IoC容器实例化、组装和管理的一个对象，它是Spring应用程序的基本构建块。 管理范围：Bean可以是Java对象、组件、服务，或者是应用程序中的任何一个被Spring容器管理的对象。  名词介绍 实例化：Spring 容器负责实例化 Bean。当应用程序启动时，Spring 容器会根据配置信息或注解扫描的结果，找到并实例化所有被标记为 Bean 的类，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="列车检索">
-<meta property="og:url" content="https://xichicheng.github.io/2024/11/20/%E5%88%97%E8%BD%A6%E6%A3%80%E7%B4%A2/index.html">
+<meta property="og:title" content="Spring-bean">
+<meta property="og:url" content="https://xichicheng.github.io/2024/11/21/bean/index.html">
 <meta property="og:site_name" content="xichiChengのblog">
-<meta property="og:description" content="车票搜索为什么用Redis而不是ESElasticSearch 是一款非常强大的开源搜索及分析引擎 而Redis是一个开源的内存数据结构存储系统 从实时性能来说，Redis 将数据存储在内存中，因此具有极低的读取延迟，可以快速响应实时查询请求。这对于需要即时更新的列车数据非常重要，确保用户能够获取到最新的车票信息。 从部署成本来说，Redis是一款轻量级的数据库，内存占用相对较低，可以在较小的硬件">
+<meta property="og:description" content="概念 基本概念：Bean是由Spring IoC容器实例化、组装和管理的一个对象，它是Spring应用程序的基本构建块。 管理范围：Bean可以是Java对象、组件、服务，或者是应用程序中的任何一个被Spring容器管理的对象。  名词介绍 实例化：Spring 容器负责实例化 Bean。当应用程序启动时，Spring 容器会根据配置信息或注解扫描的结果，找到并实例化所有被标记为 Bean 的类，">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xichicheng.github.io/img/img2.jpg">
-<meta property="article:published_time" content="2024-11-20T04:16:41.438Z">
-<meta property="article:modified_time" content="2024-11-20T11:57:31.072Z">
+<meta property="og:image" content="https://xichicheng.github.io/img/img10.jpg">
+<meta property="article:published_time" content="2024-11-21T12:48:14.105Z">
+<meta property="article:modified_time" content="2024-11-21T12:49:42.776Z">
 <meta property="article:author" content="陈兮迟">
 <meta property="article:tag" content="java后端面经">
-<meta property="article:tag" content="项目">
-<meta property="article:tag" content="12306">
+<meta property="article:tag" content="八股">
+<meta property="article:tag" content="Spring-面经">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xichicheng.github.io/img/img2.jpg">
+<meta name="twitter:image" content="https://xichicheng.github.io/img/img10.jpg">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>列车检索 - xichiChengのblog</title>
+  <title>Spring-bean - xichiChengのblog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -206,13 +206,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/img2.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/img/img10.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="列车检索"></span>
+            <span id="subtitle" data-typed-text="Spring-bean"></span>
           
         </div>
 
@@ -228,8 +228,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-11-20 12:16" pubdate>
-          星期三, 十一月 20日 2024, 12:16 中午
+        <time datetime="2024-11-21 20:48" pubdate>
+          星期四, 十一月 21日 2024, 8:48 晚上
         </time>
       </span>
     
@@ -241,7 +241,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          938 字
+          2.3k 字
         
       </span>
     
@@ -253,7 +253,7 @@
         
         
           <!-- compatible with older versions-->
-          8 分钟
+          19 分钟
         
       </span>
     
@@ -299,43 +299,136 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">列车检索</h1>
+            <h1 id="seo-header">Spring-bean</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="车票搜索为什么用Redis而不是ES"><a href="#车票搜索为什么用Redis而不是ES" class="headerlink" title="车票搜索为什么用Redis而不是ES"></a><font style="color:#262626;">车票搜索为什么用Redis而不是ES</font></h2><p>ElasticSearch 是一款非常强大的开源搜索及分析引擎</p>
-<p>而Redis是一个开源的内存数据结构存储系统</p>
-<p>从实时性能来说，Redis 将数据存储在内存中，因此具有极低的读取延迟，可以快速响应实时查询请求。这对于需要即时更新的列车数据非常重要，确保用户能够获取到最新的车票信息。</p>
-<p>从部署成本来说，Redis是一款轻量级的数据库，内存占用相对较低，可以在较小的硬件配置上运行。相比之下，ElasticSearch集群通常需要更多的资源投入，包括更高的硬件配置和更大的存储空间。</p>
-<p>从搜索条件来说，虽然页面上有很多如车次类型、车次席别、出发车站、到达车站等检索条件，但这些都是在前端进行检索的。真正的查询条件只有出发地、目的地和出发日期，而Redis 的数据模型相对简单，这使得 Redis 适合存储一些搜索条件，如出发地、目的地，可以便快速筛选结果。</p>
-<h2 id="有没有提供检索功能，比如北京到杭州，要有北京西到杭州西，北京东到杭州东，北京西到杭州东？"><a href="#有没有提供检索功能，比如北京到杭州，要有北京西到杭州西，北京东到杭州东，北京西到杭州东？" class="headerlink" title="有没有提供检索功能，比如北京到杭州，要有北京西到杭州西，北京东到杭州东，北京西到杭州东？"></a>有没有提供<strong>检索功能</strong>，比如北京到杭州，要有北京西到杭州西，北京东到杭州东，北京西到杭州东？</h2><p>前端传到后端的请求数据是出发城市，到达城市，及出发日期。</p>
-<p>前请求数据先会经过责任链，检查相关数据是否为空或空的字符串，然后检查出发日期是否正确，出发到达地点是否存在</p>
+                <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ol>
+<li><strong>基本概念</strong>：Bean是由Spring IoC容器实例化、组装和管理的一个对象，它是Spring应用程序的基本构建块。</li>
+<li><strong>管理范围</strong>：Bean可以是Java对象、组件、服务，或者是应用程序中的任何一个被Spring容器管理的对象。</li>
+</ol>
+<h3 id="名词介绍"><a href="#名词介绍" class="headerlink" title="名词介绍"></a><strong>名词介绍</strong></h3><ul>
+<li>实例化：Spring 容器负责实例化 Bean。当应用程序启动时，Spring 容器会根据配置信息或注解扫描的结果，找到并实例化所有被标记为 Bean 的类，并将它们加入容器中。实例化的过程由 Spring 的 IoC 容器负责。</li>
+<li>管理：一旦 Bean 被实例化，Spring 容器将负责管理 Bean 的生命周期和依赖关系。它会根据配置文件或注解的信息，自动解决 Bean 之间的依赖关系，确保在需要的时候正确的注入依赖。Spring 容器还会负责销毁不再需要的 Bean。</li>
+<li>依赖注入：依赖注入是 Spring 框架的一个重要特性，它允许通过自动或显式配置的方式将 Bean 的依赖项注入到其它 Bean 中。依赖注入可以通过构造函数注入、Setter 方法注入或字段注入的方式实现，其中最常见的是使用 ‘@Autowired’注解进行注入。</li>
+<li>作用域：Spring 框架提供了多种作用域（scope）来管理 Bean 的生命周期。常见的作用域包括单例（Singleton）、原型（Prototype）、会话（Session）、请求（Request）等。默认情况下，Bean 是单例的，即每个容器中只存在一个实例。但可以根据需要配置其它作用域。</li>
+<li>自动装配：Spring Boot 支持自动装配（Auto - wiring），它能够根据类型或名称自动解析和注入依赖关系。通过在需要注入的字段、构造函数或 Setter 方法上使用 ‘@Autowired’ 注解，Spring 容器会自动查找并注入对应的 Bean。</li>
+</ul>
+<p>总的来说，Bean 是 Spring 框架中被实例化、管理和维护的对象。通过在类上使用 ‘@Component’ 注解或其派生注解，将一个类声明为 Bean，并将其交给 Spring 容器处理。Spring 容器负责实例化、管理和维护 Bean 的生命周期和依赖关系。通过依赖注入和自动装配，应用程序可以方便的使用和管理 Bean。</p>
+<h2 id="自动装配"><a href="#自动装配" class="headerlink" title="自动装配"></a>自动装配</h2><h3 id="概念-1"><a href="#概念-1" class="headerlink" title="概念"></a>概念</h3><p><font style="color:#05073b;">自动装配是指Spring框架通过一定的规则，在容器中自动为Bean之间建立依赖关系的过程。在使用自动装配时，开发者无需显式地指定Bean之间的依赖关系，Spring会根据一些配置信息自动将合适的Bean注入到目标Bean中。</font></p>
+<h3 id="Spring-Boot-自动装配的实现"><a href="#Spring-Boot-自动装配的实现" class="headerlink" title="Spring Boot 自动装配的实现"></a>Spring Boot 自动装配的实现</h3><h3 id="核心注解与自动配置机制"><a href="#核心注解与自动配置机制" class="headerlink" title="核心注解与自动配置机制"></a>核心注解与自动配置机制</h3><ol>
+<li><strong>@SpringBootApplication注解</strong>：<ul>
+<li>这是一个组合注解，包含了@SpringBootConfiguration、@EnableAutoConfiguration、@ComponentScan三个重要注解。</li>
+<li>@SpringBootConfiguration：表明这是一个Spring Boot的配置类。</li>
+<li>@EnableAutoConfiguration：启用Spring Boot的自动配置机制。</li>
+<li>@ComponentScan：启用组件扫描，以便找到带有@Component、@Service、@Repository、@Controller等注解的Spring组件，并将它们注册为Spring Bean。</li>
+</ul>
+</li>
+<li><strong>@EnableAutoConfiguration注解</strong>：<ul>
+<li>触发自动配置机制。</li>
+<li>Spring Boot会根据类路径中的依赖、属性文件中的配置以及其他环境变量来判断并自动配置应用所需的Bean。</li>
+</ul>
+</li>
+</ol>
+<h3 id="二、spring-factories文件与自动配置类"><a href="#二、spring-factories文件与自动配置类" class="headerlink" title="二、spring.factories文件与自动配置类"></a>二、spring.factories文件与自动配置类</h3><ol>
+<li><strong>spring.factories文件</strong>：<ul>
+<li>位于META-INF目录下。</li>
+<li>列出了所有的自动配置类（Auto-Configuration Classes）。</li>
+<li>在Spring应用上下文初始化时，这些自动配置类会被加载，并根据条件自动配置相应的Bean。</li>
+</ul>
+</li>
+<li><strong>自动配置类</strong>：<ul>
+<li>自动配置类通常使用条件注解（Conditional Annotations）来控制Bean的装配。</li>
+<li>常见的条件注解包括：<ul>
+<li>@ConditionalOnClass：只有在指定的类在类路径上存在时才会装配Bean。</li>
+<li>@ConditionalOnMissingBean：只有在指定的Bean不存在时才会装配Bean。</li>
+<li>@ConditionalOnProperty：只有在指定的属性存在并具有特定值时才会装配Bean。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="三、组件扫描与Bean注册"><a href="#三、组件扫描与Bean注册" class="headerlink" title="三、组件扫描与Bean注册"></a>三、组件扫描与Bean注册</h3><ol>
+<li><strong>组件扫描</strong>：<ul>
+<li>通过@ComponentScan注解启用组件扫描。</li>
+<li>Spring会扫描指定包及其子包中的所有组件（带有@Component、@Service、@Repository、@Controller等注解的类），并将它们注册为Spring Bean。</li>
+</ul>
+</li>
+<li><strong>Bean注册</strong>：<ul>
+<li>在自动配置过程中，Spring Boot会根据检测到的依赖和条件注解来判断是否需要创建和注册Bean。</li>
+<li>如果满足条件，Spring Boot会创建对应的Bean，并将其注册到Spring应用程序上下文中，以供应用程序使用。</li>
+</ul>
+</li>
+</ol>
+<h3 id="四、自定义自动配置"><a href="#四、自定义自动配置" class="headerlink" title="四、自定义自动配置"></a>四、自定义自动配置</h3><p>除了使用Spring Boot提供的自动配置外，开发者还可以自定义自己的自动配置：</p>
 <ol>
-<li></li>
+<li>创建一个配置类，并在类上添加@Configuration和@EnableConfigurationProperties注解。</li>
+<li>在配置类中使用条件注解（如@ConditionalOnClass、@ConditionalOnMissingBean等）指定自动配置的条件。</li>
+<li>使用@ConfigurationProperties注解创建配置属性类，并在配置类中注入该属性类。</li>
+<li>编写需要自动配置的Bean，并使用@Bean注解将Bean注册到容器中。</li>
 </ol>
-<p>缓存中用Hash结构储存了两个城市的所有车次</p>
-<p>key是火车号-出发站点-达到站点，比如1-北京南-杭州东，代表了由北京南站驶向杭州东站的1号火车。</p>
-<p>value是这个车次的具体信息。</p>
-<p>这个Hash结构的key是出发城市-到达城市</p>
-<p>因此我们可以把北京(出发城市)杭州(到达城市)拼接在一起，然后在缓存中找这个Key对应的Hash结构，就能得到所有由北京(出发城市)驶向杭州(到达城市)的车次及车次部分信息。</p>
-<ol start="2">
-<li></li>
+<p>综上所述，Spring Boot通过核心注解、spring.factories文件、自动配置类、组件扫描与Bean注册以及自定义自动配置等机制和步骤实现了bean的自动装配。这使得开发者可以更加便捷地集成第三方组件和库，并在应用程序中使用它们，而无需手动配置大量的XML文件或Java配置类。</p>
+<h2 id="注入"><a href="#注入" class="headerlink" title="注入"></a>注入</h2><p>注入是指将依赖对象（Bean）的引用或数值注入到目标对象（Bean）中的过程。Spring支持多种注入方式，包括构造器注入、Setter方法注入和字段注入。</p>
+<ol>
+<li><strong>构造器注入（Constructor Injection）</strong>：<ul>
+<li>通过构造方法将依赖对象注入到目标对象中。</li>
+<li>实现方式：在目标对象的构造方法中声明参数，Spring容器负责将依赖对象的实例传递给构造方法。</li>
+<li>优点：确保依赖对象在目标对象创建时即被注入，避免了后续注入可能带来的不确定性。</li>
+</ul>
+</li>
+<li><strong>Setter方法注入（Setter Injection）</strong>：<ul>
+<li>通过Setter方法将依赖对象注入到目标对象中。</li>
+<li>实现方式：在目标对象中提供一个Setter方法，Spring容器负责调用该方法并传递依赖对象的实例。</li>
+<li>优点：灵活性高，可以在目标对象创建后再进行依赖注入。</li>
+</ul>
+</li>
+<li><strong>字段注入（Field Injection）</strong>：<ul>
+<li>通过字段直接将依赖对象注入到目标对象中。</li>
+<li>实现方式：在目标对象中声明一个字段，并使用<code>@Autowired</code>、<code>@Inject</code>等注解标记该字段，Spring容器负责将依赖对象的实例注入该字段。</li>
+<li>优点：简洁明了，减少了代码量。但可能导致测试困难，因为依赖对象在字段声明时即被注入，不易于替换为模拟对象。</li>
+</ul>
+</li>
 </ol>
-<p>如果缓存中没有车次集合信息，就要到数据库中找，用双重判定锁保证只有一个线程可以将数据库中相关信息加载到缓存中，避免多次查询给数据库带来巨大压力。</p>
-<p>然后根据出发城市和到达城市，可以在火车站点关联表中查询所有相关的车次集合，</p>
-<p>比如根据北京-杭州，可以得到1号火车-北京南站-杭州东站，3号火车-北京站-杭州站的两个车次。</p>
-<p>然后遍历这个集合，从缓存或数据库中查找相关列车基本信息，并填充到车次集合中。</p>
-<p>最后将这个车次集合加载到缓存中。</p>
-<ol start="3">
-<li></li>
+<h2 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h2><h3 id="概念-2"><a href="#概念-2" class="headerlink" title="概念"></a>概念</h3><p> <font style="color:#05073b;">Spring Bean的生命周期是指从Bean的创建到销毁所经历的一系列过程。这个过程由Spring容器进行管理，确保了Bean的实例化和依赖注入等操作的正确执行。</font></p>
+<h3 id="Bean定义"><a href="#Bean定义" class="headerlink" title="Bean定义"></a>Bean定义</h3><ul>
+<li>在Spring配置文件中或通过注解等方式定义Bean，包括Bean的类名、作用域、依赖关系等。</li>
+<li>Spring容器在启动时扫描这些配置，并解析成内部的BeanDefinition对象，<font style="color:#05073b;">该对象包含了Bean的各种定义信息。</font></li>
+</ul>
+<h3 id="Bean实例化"><a href="#Bean实例化" class="headerlink" title="Bean实例化"></a><font style="color:#05073b;">Bean实例化</font></h3><ul>
+<li>对于BeanFactory容器，当用户请求一个尚未初始化的Bean时，容器会调用createBean方法进行实例化。</li>
+<li>对于ApplicationContext容器，在容器启动时就会实例化所有非延迟加载的Bean。</li>
+<li>实例化过程仅仅是创建Bean的实例，并未进行依赖注入和初始化。</li>
+</ul>
+<h3 id="Bean属性赋值"><a href="#Bean属性赋值" class="headerlink" title="Bean属性赋值"></a>Bean属性赋值</h3><ul>
+<li>Spring根据BeanDefinition中的信息，通过反射机制为Bean的属性赋值。</li>
+<li>例如<code>@Autowired</code> 等注解注入的对象、<code>@Value</code> 注入的值、<code>setter</code>方法或构造函数注入依赖和值、<code>@Resource</code>注入的各种资源。</li>
+</ul>
+<h3 id="Bean初始化"><a href="#Bean初始化" class="headerlink" title="Bean初始化"></a>Bean初始化</h3><ol>
+<li><strong>Aware接口回调</strong>：<ul>
+<li>如果Bean实现了xxxAware接口（如BeanNameAware、BeanFactoryAware等），Spring容器会在Bean初始化前后调用相应的set方法，将相关的Aware实例注入给Bean。</li>
+</ul>
+</li>
+<li><strong>BeanPostProcessor前置处理</strong>：<ul>
+<li>在Bean初始化之前，Spring容器会调用实现了BeanPostProcessor接口的类的postProcessBeforeInitialization方法，对Bean进行前置处理。</li>
+</ul>
+</li>
+<li><strong>初始化Bean</strong>：<ul>
+<li>如果Bean实现了InitializingBean接口，Spring容器会调用其afterPropertiesSet方法进行初始化。</li>
+<li>或者，如果Bean在配置中指定了init-method属性，Spring容器会调用该属性指定的方法进行初始化。</li>
+</ul>
+</li>
+<li><strong>BeanPostProcessor后置处理</strong>：<ul>
+<li>在Bean初始化之后，Spring容器会调用实现了BeanPostProcessor接口的类的postProcessAfterInitialization方法，对Bean进行后置处理。</li>
+</ul>
+</li>
 </ol>
-<p>接下来就是查询列车余票信息并填充到车次基本信息中。</p>
-<p>因为列车余票数据是实时变更的，如果存储到基本信息中，就没办法变更了，因此要单独存储。</p>
-<p>遍历所有车次。</p>
-<p>先在缓存中查这个车次的所有座位种类及对应的价格的集合</p>
-<p>然后在缓存中找到所有座位种类对应的数量，然后将这个车次的每个座位种类，数量，价格封装成一个类，并加入集合中，然后将这个集合加入到这个车次基本信息中。</p>
-<p>最后返回车次信息集合。</p>
+<h3 id="Bean销毁"><a href="#Bean销毁" class="headerlink" title="Bean销毁"></a>Bean销毁</h3><ul>
+<li>对于单例作用域的Bean，Spring容器会负责其整个生命周期的管理。</li>
+<li>当容器关闭时，如果Bean实现了DisposableBean接口，Spring容器会调用其destroy方法进行销毁。</li>
+<li>或者，如果Bean在配置中指定了destroy-method属性，Spring容器会调用该属性指定的方法进行销毁。</li>
+</ul>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/44994284/1729840510674-b48de1a2-b5eb-4b5a-8b0f-9357276e8091.png" srcset="/img/loading.gif" lazyload></p>
 
                 
               </div>
@@ -354,8 +447,22 @@
     
       <span class="category-chain">
         
-  <a href="/categories/12306/" class="category-chain-item">12306</a>
+  <a href="/categories/java%E5%90%8E%E7%AB%AF%E9%9D%A2%E7%BB%8F/" class="category-chain-item">java后端面经</a>
   
+  
+    <span>></span>
+    
+  <a href="/categories/java%E5%90%8E%E7%AB%AF%E9%9D%A2%E7%BB%8F/java%E5%90%8E%E7%AB%AF-%E5%85%AB%E8%82%A1/" class="category-chain-item">java后端-八股</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/java%E5%90%8E%E7%AB%AF%E9%9D%A2%E7%BB%8F/java%E5%90%8E%E7%AB%AF-%E5%85%AB%E8%82%A1/Spring-%E9%9D%A2%E7%BB%8F/" class="category-chain-item">Spring-面经</a>
+  
+  
+
+  
+
   
 
       </span>
@@ -371,9 +478,9 @@
       
         <a href="/tags/java%E5%90%8E%E7%AB%AF%E9%9D%A2%E7%BB%8F/" class="print-no-link">#java后端面经</a>
       
-        <a href="/tags/%E9%A1%B9%E7%9B%AE/" class="print-no-link">#项目</a>
+        <a href="/tags/%E5%85%AB%E8%82%A1/" class="print-no-link">#八股</a>
       
-        <a href="/tags/12306/" class="print-no-link">#12306</a>
+        <a href="/tags/Spring-%E9%9D%A2%E7%BB%8F/" class="print-no-link">#Spring-面经</a>
       
     </div>
   
@@ -385,8 +492,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>列车检索</div>
-      <div>https://xichicheng.github.io/2024/11/20/列车检索/</div>
+      <div>Spring-bean</div>
+      <div>https://xichicheng.github.io/2024/11/21/bean/</div>
     </div>
     <div class="license-meta">
       
@@ -398,7 +505,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年11月20日</div>
+          <div>2024年11月21日</div>
         </div>
       
       
@@ -430,18 +537,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/11/20/%E8%A7%A3%E5%86%B3%E6%B3%A8%E5%86%8C%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F/" title="解决注册缓存穿透">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">解决注册缓存穿透</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/11/20/%E4%BB%A4%E7%89%8C%E6%A1%B6%E9%99%90%E6%B5%81_%E9%98%B2%E8%B6%85%E5%8D%96/" title="令牌桶限流/防超卖">
-                        <span class="hidden-mobile">令牌桶限流/防超卖</span>
+                      <a href="/2024/11/21/java-%E5%9F%BA%E7%A1%80%E4%B8%80/" title="java基础一">
+                        <span class="hidden-mobile">java基础一</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -461,8 +562,8 @@
     
       <script type="text/javascript">
         var disqus_config = function() {
-          this.page.url = 'https://xichicheng.github.io/2024/11/20/%E5%88%97%E8%BD%A6%E6%A3%80%E7%B4%A2/';
-          this.page.identifier = '/2024/11/20/%E5%88%97%E8%BD%A6%E6%A3%80%E7%B4%A2/';
+          this.page.url = 'https://xichicheng.github.io/2024/11/21/bean/';
+          this.page.identifier = '/2024/11/21/bean/';
         };
         Fluid.utils.loadComments('#disqus_thread', function() {
           var d = document, s = d.createElement('script');

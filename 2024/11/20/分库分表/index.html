@@ -30,7 +30,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xichicheng.github.io/img/img7.jpg">
 <meta property="article:published_time" content="2024-11-20T13:17:41.881Z">
-<meta property="article:modified_time" content="2024-11-20T13:18:28.934Z">
+<meta property="article:modified_time" content="2024-11-21T13:12:08.169Z">
 <meta property="article:author" content="陈兮迟">
 <meta property="article:tag" content="java后端面经">
 <meta property="article:tag" content="项目">
@@ -241,7 +241,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          1.6k 字
+          1.5k 字
         
       </span>
     
@@ -253,7 +253,7 @@
         
         
           <!-- compatible with older versions-->
-          14 分钟
+          13 分钟
         
       </span>
     
@@ -312,17 +312,17 @@
 <p><strong><font style="color:rgb(5, 7, 59);"></font></strong></p>
 <h2 id="分库分表带来的问题"><a href="#分库分表带来的问题" class="headerlink" title="分库分表带来的问题"></a>分库分表带来的问题</h2><h3 id="读请求扩散问题"><a href="#读请求扩散问题" class="headerlink" title="读请求扩散问题"></a><font style="background-color:rgb(253, 253, 254);">读请求扩散问题</font></h3><p><font style="background-color:rgb(253, 253, 254);">在某些场景下（如用户登录使用电话号码登录），由于无法确定用户的分片键，不知道具体查询哪个数据库，可能导致读请求需要扫描多个数据库或表以查找数据。</font></p>
 <p><font style="background-color:rgb(253, 253, 254);">这将大大增加系统的查询负载和响应时间，严重时可能导致登录超时等问题。</font></p>
-<h3 id="全局唯一性ID问题"><a href="#全局唯一性ID问题" class="headerlink" title="全局唯一性ID问题"></a><font style="background-color:rgb(253, 253, 254);">全局唯一性ID问题</font></h3><p><font style="color:rgb(77, 77, 77);">在之前的单库环境时，对于一张表的主键通常会选用整数型字段，然后通过数据库的自增机制来保证唯一性，但在水平分库多节点的情况时，假设还是以数据库自增机制来维护主键唯一性，可能会导致多个库中出现</font><code>&lt;font style=&quot;color:rgb(77, 77, 77);&quot;&gt;ID&lt;/font&gt;</code><font style="color:rgb(77, 77, 77);">相同、数据不同的情况。</font></p>
+<h3 id="全局唯一性ID问题"><a href="#全局唯一性ID问题" class="headerlink" title="全局唯一性ID问题"></a><font style="background-color:rgb(253, 253, 254);">全局唯一性ID问题</font></h3><p><font style="color:rgb(77, 77, 77);">在之前的单库环境时，对于一张表的主键通常会选用整数型字段，然后通过数据库的自增机制来保证唯一性，但在水平分库多节点的情况时，假设还是以数据库自增机制来维护主键唯一性，可能会导致多个库中出现</font><font style="color:rgb(77, 77, 77);">ID</font><font style="color:rgb(77, 77, 77);">相同、数据不同的情况。</font></p>
 <p><font style="color:rgb(77, 77, 77);"></font></p>
 <h2 id="用户分块分表如何实现"><a href="#用户分块分表如何实现" class="headerlink" title="用户分块分表如何实现"></a>用户分块分表如何实现</h2><h3 id="使用ShardingSphere-JDBC对用户表进行分库分表"><a href="#使用ShardingSphere-JDBC对用户表进行分库分表" class="headerlink" title="使用ShardingSphere-JDBC对用户表进行分库分表"></a>使用ShardingSphere-JDBC对用户表进行分库分表</h3><p><font style="color:rgb(51, 51, 51);">引入 ShardingSphere-JDBC 依赖</font></p>
 <p><font style="color:rgb(51, 51, 51);">在配置文件上定义分片规则后，就可以使用数据库分库分表了。</font></p>
 <p><font style="color:rgb(77, 77, 77);"></font></p>
-<h3 id="综合考虑使用username作为分库分表的分片键"><a href="#综合考虑使用username作为分库分表的分片键" class="headerlink" title="综合考虑使用username作为分库分表的分片键"></a>综合考虑使用username作为分库分表的分片键</h3><p><strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">从查询优化来看</font></strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">：</font><code>&lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;username&lt;/font&gt;</code><font style="background-color:rgb(253, 253, 254);">是用户登录和查询个人信息时常用的字段。将其作为分片键，可以使得相关的查询操作能够直接定位到特定的分片上，从而减少了跨分片查询的需求，提高了查询效率。</font></p>
-<p><strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">从避免热点数据来看</font></strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">：</font><code>&lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;username&lt;/font&gt;</code><font style="background-color:rgb(253, 253, 254);">通常具有唯一性和较高的随机性，这有助于保证数据在各个分片上的均匀分布。这样可以避免出现某个分片上的数据过于集中，导致热点问题和性能瓶颈。</font></p>
-<p><strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">从稳定性来看</font></strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">：</font><font style="background-color:rgb(253, 253, 254);">一旦选择了分片键，它应该是不可变的。</font><code>&lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;username&lt;/font&gt;</code><font style="background-color:rgb(253, 253, 254);">在用户注册后通常不会发生变化，因此满足这一要求。这保证了分片策略的稳定性和可靠性。</font></p>
+<h3 id="综合考虑使用username作为分库分表的分片键"><a href="#综合考虑使用username作为分库分表的分片键" class="headerlink" title="综合考虑使用username作为分库分表的分片键"></a>综合考虑使用username作为分库分表的分片键</h3><p><strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">从查询优化来看</font></strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">：</font><font style="background-color:rgb(253, 253, 254);">username</font><font style="background-color:rgb(253, 253, 254);">是用户登录和查询个人信息时常用的字段。将其作为分片键，可以使得相关的查询操作能够直接定位到特定的分片上，从而减少了跨分片查询的需求，提高了查询效率。</font></p>
+<p><strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">从避免热点数据来看</font></strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">：</font><font style="background-color:rgb(253, 253, 254);">username</font>&#96;<font style="background-color:rgb(253, 253, 254);">通常具有唯一性和较高的随机性，这有助于保证数据在各个分片上的均匀分布。这样可以避免出现某个分片上的数据过于集中，导致热点问题和性能瓶颈。</font></p>
+<p><strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">从稳定性来看</font></strong><font style="color:rgb(5, 7, 59);background-color:rgb(253, 253, 254);">：</font><font style="background-color:rgb(253, 253, 254);">一旦选择了分片键，它应该是不可变的。</font><font style="background-color:rgb(253, 253, 254);">username</font>&#96;<font style="background-color:rgb(253, 253, 254);">在用户注册后通常不会发生变化，因此满足这一要求。这保证了分片策略的稳定性和可靠性。</font></p>
 <h3 id="使用分库分表策略对用户表进行拆分"><a href="#使用分库分表策略对用户表进行拆分" class="headerlink" title="使用分库分表策略对用户表进行拆分"></a>使用分库分表策略对用户表进行拆分</h3><ul>
 <li><font style="background-color:rgb(253, 253, 254);">计算用户username的哈希值。</font></li>
-<li><font style="background-color:rgb(253, 253, 254);">使用哈希值对</font><code>&lt;font style=&quot;background-color:rgb(253, 253, 254);&quot;&gt;sharding-count&lt;/font&gt;</code><font style="background-color:rgb(253, 253, 254);">（总分片数）取模，得到一个表分片索引。</font></li>
+<li><font style="background-color:rgb(253, 253, 254);">使用哈希值对</font><font style="background-color:rgb(253, 253, 254);">sharding-count</font><font style="background-color:rgb(253, 253, 254);">（总分片数）取模，得到一个表分片索引。</font></li>
 <li><font style="background-color:rgb(253, 253, 254);">根据索引选择目标表分片。</font></li>
 <li><font style="background-color:rgb(253, 253, 254);">再除以一个库中分片数，得到要分配库的数字。</font></li>
 </ul>
@@ -372,8 +372,22 @@
     
       <span class="category-chain">
         
-  <a href="/categories/12306/" class="category-chain-item">12306</a>
+  <a href="/categories/java%E5%90%8E%E7%AB%AF%E9%9D%A2%E7%BB%8F/" class="category-chain-item">java后端面经</a>
   
+  
+    <span>></span>
+    
+  <a href="/categories/java%E5%90%8E%E7%AB%AF%E9%9D%A2%E7%BB%8F/java%E5%90%8E%E7%AB%AF-%E9%A1%B9%E7%9B%AE/" class="category-chain-item">java后端-项目</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/java%E5%90%8E%E7%AB%AF%E9%9D%A2%E7%BB%8F/java%E5%90%8E%E7%AB%AF-%E9%A1%B9%E7%9B%AE/12306/" class="category-chain-item">12306</a>
+  
+  
+
+  
+
   
 
       </span>

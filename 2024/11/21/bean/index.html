@@ -557,24 +557,27 @@
   
     <article id="comments" lazyload>
       
-  <div class="disqus" style="width:100%">
-    <div id="disqus_thread"></div>
-    
-      <script type="text/javascript">
-        var disqus_config = function() {
-          this.page.url = 'https://xichicheng.github.io/2024/11/21/bean/';
-          this.page.identifier = '/2024/11/21/bean/';
-        };
-        Fluid.utils.loadComments('#disqus_thread', function() {
-          var d = document, s = d.createElement('script');
-          s.src = '//' + 'fluid' + '.disqus.com/embed.js';
-          s.setAttribute('data-timestamp', new Date());
-          (d.head || d.body).appendChild(s);
-        });
-      </script>
-    
-    <noscript>Please enable JavaScript to view the comments</noscript>
-  </div>
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"ViqF4wnvCxeu0m6MNojT6jYe-gzGzoHsz","appKey":"ozav5Z7aQuGGpihyMRG9iBec","path":"window.location.pathname","placeholder":"请输入评论...","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":true},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
 
 
     </article>
@@ -859,7 +862,7 @@
 <script src="//cdn.jsdelivr.net/gh/bynotes/texiao/source/js/love.js"></script>
 <script src="//cdn.jsdelivr.net/gh/bynotes/texiao/source/js/caidai.js"></script>
 <script src="//cdn.jsdelivr.net/gh/bynotes/texiao/source/js/yinghua.js"></script>
-<script src="//cdn.jsdelivr.net/gh/bynotes/texiao@master/source/js/timeDate.js"></script>
+<script src="//cdn.jsdelivr.net/gh/bynotes/texiao/source/js/timeDate.js"></script>
 
 
 

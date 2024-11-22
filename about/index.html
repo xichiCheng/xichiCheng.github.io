@@ -101,7 +101,7 @@
   <header>
     
 
-<div class="header-inner" style="height: 60vh;">
+<div class="header-inner" style="height: 100vh;">
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
@@ -215,6 +215,10 @@
       </div>
 
       
+        <div class="scroll-down-bar">
+          <i class="iconfont icon-arrowdown"></i>
+        </div>
+      
     </div>
   </div>
 </div>
@@ -227,7 +231,7 @@
     
       <div class="container nopadding-x-md">
         <div id="board"
-          >
+          style="margin-top: 0">
           
             <div class="about-avatar">
               <img src="/img/%E5%A4%B4%E5%83%8F.jpg" srcset="/img/loading.gif" lazyload class="img-fluid" alt="avatar">
@@ -269,7 +273,7 @@
     Fluid.utils.loadComments('#valine', function() {
       Fluid.utils.createScript('https://lib.baomitu.com/valine/1.5.1/Valine.min.js', function() {
         var options = Object.assign(
-          {"appId":"ViqF4wnvCxeu0m6MNojT6jYe-gzGzoHsz","appKey":"ozav5Z7aQuGGpihyMRG9iBec","path":"window.location.pathname","placeholder":"无需登录可直接发布评论...","avatar":"mp","meta":["nick","mail"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":true,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":true,"visitor":true},
+          {"appId":"ViqF4wnvCxeu0m6MNojT6jYe-gzGzoHsz","appKey":"ozav5Z7aQuGGpihyMRG9iBec","path":"window.location.pathname","placeholder":"无需登录可直接发布评论...","avatar":"mp","meta":["nick"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":true,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":true,"visitor":true},
           {
             el: "#valine",
             path: window.location.pathname

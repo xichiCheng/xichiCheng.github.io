@@ -1,5 +1,5 @@
 // 图片数组
-const images = ['/img/default.png', '/img/img2.jpg'];
+const images = ['/img/default.png', '/img/img8.jpg','/img/img10.jpg','/img/img40.jpg'];
 
 let currentIndex = 0; // 当前图片的索引
 

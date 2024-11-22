@@ -1,3 +1,3 @@
-hexo.extend.injector.register('body_end', `
+hexo.extend.injector.register('body_begin', `
   <script src="/js/Carousel.js"></script>
 `)

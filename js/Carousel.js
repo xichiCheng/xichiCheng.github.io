@@ -1,5 +1,5 @@
 // 图片数组
-const images = ['/img/default.png','/img/img1.jpg','/img/img2.jpg','/img/img6.jpeg', '/img/img8.jpeg','/img/img10.jpeg'];
+const images = ['/img/default.png','/img/img1.jpg','/img/img8.jpeg','/img/img10.jpeg','/img/img2.jpg','/img/img6.jpeg'];
 
 
 // 预加载图片

@@ -1,5 +1,5 @@
 // 图片数组
-const images = ['/img/default.png','/img/img1.jpg','/img/img2.jpg', '/img/img5.jpeg','/img/img8.jpeg','/img/img10.jpeg','/img/img6.jpeg'];
+const images = ['/img/default.png','/img/img1.jpg','/img/img2.jpg','/img/img6.jpeg', '/img/img8.jpeg','/img/img10.jpeg'];
 
 
 // 预加载图片
@@ -33,4 +33,4 @@ function changeBackgroundImage() {
 banner.style.backgroundImage = `url(${images[currentIndex]})`;
 
 // 每3秒切换一次背景
-setInterval(changeBackgroundImage, 3000);
+setInterval(changeBackgroundImage, 4000);
